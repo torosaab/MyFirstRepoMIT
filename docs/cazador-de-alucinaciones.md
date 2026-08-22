@@ -8,13 +8,32 @@ detección y verificación de alucinaciones de IA.
 
 ## Concepto
 
-Cada ronda muestra **5 respuestas generadas por IA** sobre un tema.
-**Exactamente 2 contienen datos falsos.** El alumno debe:
+Cada ronda arranca con **una pregunta hecha a un chatbot**. Las 5 tarjetas
+siguientes son **su respuesta**, y exactamente 2 contienen datos inventados.
 
-1. **Detectar** las 2 falsas (Fase 1).
-2. **Verificar** cada una eligiendo la corrección correcta entre 3 opciones (Fase 2).
+La idea central: **el alumno no necesita saber el dato correcto**. Debe
+reconocer las marcas con las que se disfraza una invención. Por eso el juego
+enseña primero las señales y luego hace jugar.
 
-La Fase 2 es el núcleo pedagógico: sospechar no es suficiente, hay que comprobar.
+1. **Detectar** las 2 falsas (Fase 1), apoyándose en el panel de señales.
+2. **Verificar** cada una eligiendo la corrección correcta entre 3 opciones
+   (Fase 2). Sospechar no basta: hay que comprobar.
+
+## Las 4 señales de alarma
+
+Disponibles en todo momento desde el botón "Señales de alarma" de la barra
+superior, y repetidas en el modal de "¿Cómo se juega?".
+
+| Señal | En qué consiste |
+| --- | --- |
+| Cifras demasiado precisas | Un porcentaje con decimales o una cantidad "exacta" en algo que en realidad es un rango. |
+| Fuentes que no se pueden abrir | "Según un estudio", "un informe de la NASA de 2019", sin título, autor ni enlace. |
+| Absolutos | "El único", "siempre", "nunca", "todos". Rara vez sobreviven a una comprobación. |
+| Un dato falso escondido entre datos correctos | La frase es casi toda cierta y el error está en un solo detalle. |
+
+Al revelar los resultados, cada tarjeta falsa muestra un bloque
+**🚩 Señal de alarma** explicando cuál de las cuatro la delataba, más una
+pista de verificación con la fuente recomendada.
 
 ## Paleta
 
@@ -27,7 +46,8 @@ La Fase 2 es el núcleo pedagógico: sospechar no es suficiente, hay que comprob
 | Negro | `#000000` |
 | Cian eléctrico | `#00BFFF` |
 
-Estética cyberpunk/neón sobre degradado negro → azul marino.
+Estética cyberpunk/neón sobre degradado negro → azul marino. Los seis colores
+están definidos como tokens oklch en `src/styles.css`.
 
 ## Mecánica de puntuación
 
@@ -39,7 +59,7 @@ Estética cyberpunk/neón sobre degradado negro → azul marino.
 | Bonus de tiempo | segundos restantes × 2 |
 
 - **Vidas:** 3. Se pierde una al fallar las 2 detecciones de una ronda.
-- **Racha:** rondas consecutivas perfectas. ×1.5 desde racha 3, ×2 desde racha 5.
+- **Racha:** rondas consecutivas perfectas. ×1,5 desde racha 3, ×2 desde racha 5.
 - **Temporizador:** 60 s por ronda (solo afecta al bonus, no elimina).
 
 ## Insignias
@@ -65,18 +85,26 @@ Estética cyberpunk/neón sobre degradado negro → azul marino.
 
 ## Rondas y contenido
 
-Las 6 rondas viven en `src/data/rounds.ts`. Cada afirmación lleva texto,
-marca de veracidad, explicación, corrección correcta, 2 señuelos y una pista
-de verificación con la fuente recomendada.
+Las 6 rondas viven en `src/data/rounds.ts`. Nivel de cultura general
+(secundaria), deliberadamente no especializado: la dificultad está en detectar
+la señal, no en dominar el tema. Cada `Round` lleva la `question` al chatbot;
+cada afirmación falsa lleva `correction`, 2 `decoys`, el `redFlag` y la pista
+de `verification`.
 
-| Ronda | Tema | Las 2 falsas |
-| --- | --- | --- |
-| 1 | Ciencia y espacio | Muralla China visible desde la Luna · Nobel de Einstein por la relatividad |
-| 2 | Historia | Napoleón excepcionalmente bajo · Cascos vikingos con cuernos |
-| 3 | Cuerpo humano | Usamos el 10 % del cerebro · Pelo y uñas crecen tras la muerte |
-| 4 | Inteligencia artificial | Los LLM consultan siempre internet · Una cita con formato completo es real |
-| 5 | Geografía | El Sahara es el mayor desierto · Sídney es la capital de Australia |
-| 6 | Datos y estadística | Una muestra grande elimina el sesgo · p = 0,05 ⇒ 95 % de que sea verdad |
+| Ronda | Tema | Las 2 alucinaciones | Señal que las delata |
+| --- | --- | --- | --- |
+| 1 | El Sistema Solar | Júpiter es el planeta más cercano al Sol (con la distancia real de Mercurio) | Cifra precisa junto a un dato falso |
+| | | La Luna genera un 12 % de luz propia "según un informe de la NASA de 2019" | Fuente que no se puede abrir |
+| 2 | El cuerpo humano | Usamos el 10 % del cerebro "según un estudio de Harvard de 1998" | Estudio inventado |
+| | | El mapa de sabores de la lengua | Mito muy repetido |
+| 3 | Geografía | Sídney es la capital de Australia (con su población real) | Dato cierto que valida al falso |
+| | | El Everest está entre Nepal y la India | Error escondido en un detalle |
+| 4 | Historia | Cascos vikingos con cuernos "según el yacimiento de Gjermundbu" | Fuente real que dice lo contrario |
+| | | La Muralla China es "la única" construcción visible desde el espacio | Absoluto |
+| 5 | Cómo funciona la IA | Un modelo no puede inventar referencias | La señal en la que más confiamos |
+| | | La IA consulta internet siempre, así que está actualizada | Frase tranquilizadora |
+| 6 | Cifras y estadísticas | El cuerpo tiene "exactamente 7,4 litros" de sangre | Precisión falsa sobre un rango |
+| | | "El 73 % de los estudiantes usa IA a diario, según un estudio reciente" | Porcentaje sin fuente localizable |
 
 Las rondas y las tarjetas dentro de cada ronda se barajan en cada partida.
 
@@ -91,6 +119,6 @@ Cuatro consejos de verificación al terminar la partida:
 
 ## Stack
 
-React + TypeScript + Tailwind + shadcn/ui. Sin backend ni login: el ranking
-top 10 se guarda en `localStorage`. Interfaz íntegramente en español,
-responsive y accesible por teclado.
+React + TypeScript + TanStack Start + Tailwind + shadcn/ui. Sin backend ni
+login: el ranking top 10 se guarda en `localStorage`. Interfaz íntegramente en
+español, responsive y accesible por teclado.
