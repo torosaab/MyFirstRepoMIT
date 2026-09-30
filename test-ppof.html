@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Test PPOF</title>
+<meta name="description" content="Test PPOF de PEAK LATAM: mide en menos de 5 minutos el enfoque operativo de tu organización.">
+<style>
+/* Diseño: una columna centrada de 640 px, una decisión por pantalla, semáforo con color + ícono + texto.
+   Tokens de la sección 6 del PRD. Tema claro fijo por decisión del PRD (modo oscuro fuera de v1.0). */
+:root {
+  --color-marca: #0B3A6F;
+  --color-marca-suave: #E7EEF6;
+  --color-texto: #0F1B2D;
+  --color-texto-suave: #4A5568;
+  --color-fondo: #F5F7FA;
+  --color-superficie: #FFFFFF;
+  --color-borde: #D5DCE5;
+  --color-rojo: #B3261E;
+  --color-rojo-suave: #FBE9E7;
+  --color-amarillo: #F2B705;
+  --color-amarillo-suave: #FFF6D6;
+  --color-verde: #17703F;
+  --color-verde-suave: #E5F3EA;
+  --color-whatsapp: #128C4A;
+  --fuente: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radio: 12px;
+  --espacio: 8px;
+  --ancho-max: 640px;
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente);
+  font-size: clamp(16px, 1rem + 0.15vw, 18px);
+  line-height: 1.5;
+}
+[hidden] { display: none !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.contenedor {
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  padding-inline: calc(var(--espacio) * 2);
+  padding-block: calc(var(--espacio) * 3) calc(var(--espacio) * 6);
+}
+.marca {
+  display: flex; align-items: center; gap: var(--espacio);
+  color: var(--color-marca); font-weight: 800; letter-spacing: 0.08em;
+  font-size: 0.875rem; text-transform: uppercase;
+  margin-bottom: calc(var(--espacio) * 4);
+}
+.marca svg { width: 28px; height: 28px; flex: none; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(28px, 6vw, 40px); color: var(--color-marca); }
+h1:focus, h2:focus { outline: none; }
+h1:focus-visible, h2:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 4px; border-radius: 4px; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.0625rem; }
+p { margin: 0; }
+.subtitulo { font-size: 1.125rem; color: var(--color-texto-suave); margin-top: var(--espacio); }
+.pila { display: flex; flex-direction: column; gap: calc(var(--espacio) * 2); }
+.pila-grande { display: flex; flex-direction: column; gap: calc(var(--espacio) * 4); }
+
+.pantalla { animation: aparecer 180ms ease-out; }
+@keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .pantalla { animation: none; }
+  * { transition: none !important; }
+}
+
+/* Bienvenida */
+.entregables { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--espacio); }
+.entregables li { display: flex; gap: var(--espacio); align-items: flex-start; }
+.entregables svg { flex: none; width: 22px; height: 22px; margin-top: 1px; color: var(--color-marca); }
+
+.tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: calc(var(--espacio) * 3);
+}
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo label { font-weight: 600; }
+.campo input[type="text"], .campo input[type="email"] {
+  font: inherit; color: var(--color-texto);
+  min-height: 48px; padding: 10px 14px;
+  border: 1.5px solid var(--color-borde); border-radius: var(--radio);
+  background: var(--color-superficie);
+  width: 100%;
+}
+.campo input:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 2px; border-color: var(--color-marca); }
+.campo input[aria-invalid="true"] { border-color: var(--color-rojo); }
+.campo.valido input { border-color: var(--color-verde); }
+.error {
+  color: var(--color-rojo); font-size: 0.9375rem;
+  display: flex; gap: 6px; align-items: flex-start;
+}
+.error svg { flex: none; width: 18px; height: 18px; margin-top: 2px; }
+.casilla { display: flex; gap: 12px; align-items: flex-start; }
+.casilla input { width: 24px; height: 24px; margin: 0; flex: none; accent-color: var(--color-marca); }
+.casilla input:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 2px; }
+.casilla label { font-weight: 400; }
+a { color: var(--color-marca); }
+a:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 2px; border-radius: 2px; }
+
+.boton {
+  font: inherit; font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--espacio);
+  min-height: 48px; padding: 12px 24px;
+  border-radius: var(--radio); border: 2px solid var(--color-marca);
+  background: var(--color-marca); color: #FFFFFF;
+  text-decoration: none; text-align: center;
+}
+.boton:hover { filter: brightness(1.1); }
+.boton:active { transform: translateY(1px); }
+.boton:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 2px; }
+.boton:disabled, .boton[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; filter: none; transform: none; }
+.boton-contorno { background: var(--color-superficie); color: var(--color-marca); min-height: 44px; }
+.boton-whatsapp { background: var(--color-whatsapp); border-color: var(--color-whatsapp); }
+.boton-whatsapp:focus-visible { outline-color: var(--color-whatsapp); }
+.boton svg { width: 20px; height: 20px; flex: none; }
+@media (max-width: 480px) { .boton-bloque-movil { width: 100%; } }
+
+.enlace-boton {
+  font: inherit; background: none; border: 0; padding: 10px 4px; min-height: 44px;
+  color: var(--color-marca); text-decoration: underline; cursor: pointer;
+}
+.enlace-boton:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 2px; border-radius: 4px; }
+
+/* Test */
+.progreso-texto { display: flex; justify-content: space-between; font-size: 0.9375rem; color: var(--color-texto-suave); font-variant-numeric: tabular-nums; }
+.barra { height: 8px; background: var(--color-marca-suave); border-radius: 999px; overflow: hidden; }
+.barra > div { height: 100%; background: var(--color-marca); width: 0; transition: width 200ms ease-out; }
+.dimension {
+  align-self: flex-start;
+  background: var(--color-marca-suave); color: var(--color-marca);
+  font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+}
+.pregunta-texto { font-size: clamp(22px, 4.5vw, 26px); line-height: 1.35; min-height: 5.4em; display: flex; align-items: center; }
+.respuestas { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--espacio) * 2); }
+.respuesta {
+  font: inherit; font-size: 1.25rem; font-weight: 700; cursor: pointer;
+  min-height: 64px; border-radius: var(--radio);
+  border: 2px solid var(--color-marca); background: var(--color-superficie); color: var(--color-marca);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--espacio);
+}
+.respuesta svg { width: 22px; height: 22px; display: none; }
+.respuesta[aria-pressed="true"] { background: var(--color-marca); color: #FFFFFF; }
+.respuesta[aria-pressed="true"] svg { display: inline; }
+.respuesta:focus-visible { outline: 3px solid var(--color-marca); outline-offset: 2px; }
+.respuesta:hover { background: var(--color-marca-suave); }
+.respuesta[aria-pressed="true"]:hover { background: var(--color-marca); }
+.atajos { font-size: 0.875rem; color: var(--color-texto-suave); }
+kbd { font-family: inherit; border: 1px solid var(--color-borde); border-bottom-width: 2px; border-radius: 4px; padding: 0 6px; background: var(--color-superficie); }
+.navegacion-test { min-height: 44px; }
+
+/* Resultado */
+.resultado-bloque {
+  border-radius: var(--radio); padding: calc(var(--espacio) * 3);
+  border: 1px solid transparent;
+  display: grid; grid-template-columns: auto 1fr; gap: calc(var(--espacio) * 2); align-items: center;
+}
+.resultado-bloque > div { min-width: 0; }
+.resultado-bloque.rojo { background: var(--color-rojo-suave); border-color: var(--color-rojo); }
+.resultado-bloque.amarillo { background: var(--color-amarillo-suave); border-color: var(--color-amarillo); }
+.resultado-bloque.verde { background: var(--color-verde-suave); border-color: var(--color-verde); }
+.icono-semaforo { width: 56px; height: 56px; }
+.puntaje { font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.clasificacion-nombre { font-size: 1.25rem; font-weight: 700; margin-top: 4px; }
+.nivel { font-weight: 700; margin-top: 2px; }
+.resultado-bloque.rojo .nivel { color: var(--color-rojo); }
+.resultado-bloque.amarillo .nivel { color: var(--color-texto); }
+.resultado-bloque.verde .nivel { color: var(--color-verde); }
+.titular { font-size: 1.1875rem; font-weight: 700; line-height: 1.4; }
+.medidor { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.medidor span { height: 14px; border-radius: 3px; background: var(--color-superficie); border: 1.5px solid var(--color-borde); }
+.medidor.rojo span.lleno { background: var(--color-rojo); border-color: var(--color-rojo); }
+.medidor.amarillo span.lleno { background: var(--color-amarillo); border-color: #B98C00; }
+.medidor.verde span.lleno { background: var(--color-verde); border-color: var(--color-verde); }
+.medidor-leyenda { display: flex; justify-content: space-between; font-size: 0.8125rem; color: var(--color-texto-suave); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.seccion { display: flex; flex-direction: column; gap: 12px; }
+.seccion h2 { color: var(--color-marca); }
+.tarjeta-contenido { border-left: 0; }
+.tarjeta h3 { color: var(--color-marca); margin-bottom: var(--espacio); }
+.tarjeta .pila { gap: 12px; }
+.senales { margin: 0; padding-left: 1.25em; display: grid; gap: 4px; }
+.cierre { background: var(--color-marca); color: #FFFFFF; border: 0; }
+.cierre h2 { color: #FFFFFF; }
+.cierre .boton-whatsapp { border-color: #FFFFFF; }
+.cierre .boton-whatsapp:focus-visible { outline-color: #FFFFFF; }
+.aviso-config { font-size: 0.875rem; opacity: 0.9; }
+.mensaje-pdf { font-size: 0.9375rem; color: var(--color-rojo); }
+.acciones { display: flex; flex-wrap: wrap; gap: calc(var(--espacio) * 2); align-items: center; }
+.pie {
+  margin-top: calc(var(--espacio) * 5); padding-top: calc(var(--espacio) * 3);
+  border-top: 1px solid var(--color-borde);
+  font-size: 0.875rem; color: var(--color-texto-suave); line-height: 1.6;
+}
+.pie strong { color: var(--color-texto); }
+.noscript { background: var(--color-amarillo-suave); border: 1px solid var(--color-amarillo); padding: 16px; border-radius: var(--radio); margin: 16px; }
+
+@media print {
+  body { background: #FFFFFF; font-size: 11pt; }
+  .contenedor { max-width: none; padding: 0; }
+  #pantalla-registro, #pantalla-test, .acciones, .boton, .enlace-boton, .marca svg { display: none !important; }
+  .tarjeta, .resultado-bloque { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  .cierre { background: #FFFFFF; color: var(--color-texto); border: 1px solid var(--color-borde); }
+  .cierre h2 { color: var(--color-marca); }
+  .enlace-impreso { display: block !important; }
+}
+.enlace-impreso { display: none; word-break: break-all; }
+</style>
+</head>
+<body>
+<noscript><div class="noscript"><strong>El Test PPOF requiere JavaScript.</strong> Activa JavaScript en tu navegador y vuelve a cargar la página.</div></noscript>
+
+<div class="contenedor">
+  <div class="marca" id="marca">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 27 L13 9 L18 17 L22 11 L29 27 Z" fill="currentColor"/></svg>
+    <span>PEAK LATAM</span>
+  </div>
+
+  <!-- Pantalla 1: bienvenida y registro -->
+  <section id="pantalla-registro" class="pantalla pila-grande" aria-labelledby="titulo-registro">
+    <div>
+      <h1 id="titulo-registro" tabindex="-1">Test PPOF</h1>
+      <p class="subtitulo">Evalúa el nivel de enfoque operativo de tu organización</p>
+    </div>
+    <div class="pila">
+      <p>El Test PPOF (Perfect Present Operational Focus) mide, con 10 preguntas de Sí o No, qué tan enfocada está la operación de tu organización. Te toma menos de 5 minutos.</p>
+      <p><strong>Al terminar recibirás:</strong></p>
+      <ul class="entregables">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>La clasificación de tu organización</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>La interpretación de los principales riesgos identificados</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Recomendaciones iniciales para recuperar el foco</span></li>
+      </ul>
+    </div>
+    <form id="form-registro" class="tarjeta pila" novalidate>
+      <div class="campo" id="campo-nombre">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" autocomplete="name" aria-describedby="error-nombre" maxlength="120">
+        <p class="error" id="error-nombre" hidden></p>
+      </div>
+      <div class="campo" id="campo-empresa">
+        <label for="empresa">Empresa</label>
+        <input type="text" id="empresa" name="empresa" autocomplete="organization" aria-describedby="error-empresa" maxlength="160">
+        <p class="error" id="error-empresa" hidden></p>
+      </div>
+      <div class="campo" id="campo-correo">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" name="correo" autocomplete="email" inputmode="email" aria-describedby="error-correo" maxlength="160">
+        <p class="error" id="error-correo" hidden></p>
+      </div>
+      <div class="campo" id="campo-privacidad">
+        <div class="casilla">
+          <input type="checkbox" id="privacidad" name="privacidad" aria-describedby="error-privacidad">
+          <label for="privacidad" id="etiqueta-privacidad">Acepto el aviso de privacidad de PEAK LATAM.</label>
+        </div>
+        <p class="error" id="error-privacidad" hidden></p>
+      </div>
+      <button type="submit" class="boton boton-bloque-movil" id="boton-comenzar">Comenzar test</button>
+    </form>
+  </section>
+
+  <!-- Pantalla 2: test -->
+  <section id="pantalla-test" class="pantalla pila-grande" aria-labelledby="titulo-pregunta" hidden>
+    <div class="pila" style="gap:8px">
+      <div class="progreso-texto"><span id="texto-progreso">Pregunta 1 de 10</span><span id="porcentaje-progreso">0%</span></div>
+      <div class="barra" role="progressbar" aria-label="Avance del test" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="barra-progreso"><div id="barra-relleno"></div></div>
+    </div>
+    <div class="pila">
+      <span class="dimension" id="dimension">Dimensión</span>
+      <h1 class="pregunta-texto" id="titulo-pregunta" tabindex="-1">Pregunta</h1>
+    </div>
+    <div class="respuestas" role="group" aria-labelledby="titulo-pregunta">
+      <button type="button" class="respuesta" id="resp-si" data-valor="si" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Sí</button>
+      <button type="button" class="respuesta" id="resp-no" data-valor="no" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>No</button>
+    </div>
+    <div class="navegacion-test"><button type="button" class="enlace-boton" id="boton-anterior">&larr; Anterior</button></div>
+    <p class="atajos">Atajos: <kbd>S</kbd> para Sí, <kbd>N</kbd> para No.</p>
+  </section>
+
+  <!-- Pantalla 3: resultado -->
+  <section id="pantalla-resultado" class="pantalla pila-grande" aria-labelledby="titulo-resultado" hidden>
+    <h1 id="titulo-resultado" tabindex="-1">Tu resultado</h1>
+    <div class="pila">
+      <div class="resultado-bloque" id="resultado-bloque">
+        <span id="icono-resultado"></span>
+        <div>
+          <p class="puntaje" id="resultado-puntaje">0 de 10</p>
+          <p class="clasificacion-nombre" id="resultado-clasificacion"></p>
+          <p class="nivel" id="resultado-nivel"></p>
+        </div>
+      </div>
+      <p class="titular" id="resultado-titular"></p>
+      <div>
+        <div class="medidor" id="medidor" role="img" aria-label=""></div>
+        <div class="medidor-leyenda" aria-hidden="true"><span>0</span><span>10 señales</span></div>
+      </div>
+    </div>
+
+    <div class="seccion">
+      <h2>Interpretación</h2>
+      <div class="pila" id="resultado-interpretacion"></div>
+    </div>
+    <div class="seccion">
+      <h2>Perspectiva de Recursos Humanos</h2>
+      <div class="pila" id="resultado-rh"></div>
+    </div>
+    <div class="tarjeta">
+      <h3>Principal desafío</h3>
+      <div class="pila" id="resultado-desafio"></div>
+    </div>
+    <div class="tarjeta">
+      <h3>Recomendación PEAK</h3>
+      <div class="pila" id="resultado-recomendacion"></div>
+    </div>
+    <div class="seccion">
+      <h2>Siguiente paso</h2>
+      <div class="pila" id="resultado-siguiente"></div>
+    </div>
+    <div class="seccion" id="bloque-senales">
+      <h2>Señales detectadas</h2>
+      <p>Dimensiones en las que respondiste «Sí»:</p>
+      <ul class="senales" id="lista-senales"></ul>
+    </div>
+
+    <div class="pila" style="gap:8px">
+      <div class="acciones">
+        <button type="button" class="boton boton-contorno" id="boton-pdf">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="boton-pdf-texto">Descargar resultado en PDF</span>
+        </button>
+        <button type="button" class="enlace-boton" id="boton-repetir">Repetir test</button>
+      </div>
+      <p class="mensaje-pdf" id="mensaje-pdf" role="status" hidden></p>
+    </div>
+
+    <div class="tarjeta cierre pila">
+      <h2>¡Hablemos!</h2>
+      <p id="texto-cierre"></p>
+      <p id="texto-cta"></p>
+      <div><a class="boton boton-whatsapp boton-bloque-movil" id="boton-whatsapp" href="#" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.2a9.7 9.7 0 0 0-8.4 14.6L2.2 21.8l5.1-1.3A9.7 9.7 0 1 0 12 2.2Zm0 17.7a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 19.9Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11.2 11.2 0 0 0 4.3 3.8c1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.5-.3Z"/></svg>
+        Hablar por WhatsApp</a></div>
+      <p class="aviso-config" id="aviso-whatsapp" hidden>El enlace de WhatsApp aún no está configurado.</p>
+      <p class="enlace-impreso" id="enlace-impreso"></p>
+    </div>
+
+    <footer class="pie" id="pie-contacto"></footer>
+  </section>
+
+  <div class="sr-only" aria-live="polite" id="anuncio"></div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* =========================================================================
+   CONFIGURACIÓN — el único bloque que hay que editar para publicar.
+   ========================================================================= */
+var CONFIG = {
+  // URL https del webhook que recibe los leads (Make, Zapier, n8n o Google Apps Script).
+  // Vacío = la app funciona completa y solo avisa en consola.
+  endpointLead: '',
+  // Número de WhatsApp en formato internacional, solo dígitos (ej. '525512345678'),
+  // o un enlace completo https://wa.me/... Vacío = el botón queda deshabilitado.
+  whatsapp: '',
+  // Enlace al aviso de privacidad. Vacío = la casilla se muestra sin enlace.
+  avisoPrivacidad: '',
+  contacto: {
+    empresa: 'PEAK LATAM',
+    filial: 'Filial de Peak Performance Consulting Group',
+    direccion: 'Campus Corporativo Coyoacan. Av. Coyoacan 1622 Edificio 4, Piso 2 Col. Del Valle. Del. Benito Juarez. C.P. 03100 Ciudad de México.',
+    telefono: 'Tel. +52 (55) 6820 2176',
+    correo: 'contacto@engagepeak.com'
+  },
+  version: '1.0'
+};
+
+/* =========================================================================
+   CONTENIDO — fuente única para la pantalla y el PDF.
+   ========================================================================= */
+var PREGUNTAS = [
+  { dimension: 'Efectividad de las reuniones', texto: '¿Más del 30% de las reuniones terminan sin acuerdos claros, responsables definidos o fechas de seguimiento?' },
+  { dimension: 'Priorización', texto: '¿Los líderes gestionan simultáneamente más de tres iniciativas consideradas de "alta prioridad"?' },
+  { dimension: 'Gestión mediante indicadores', texto: '¿Los tableros operativos contienen más de 10 KPIs?' },
+  { dimension: 'Retrabajo', texto: '¿Existen retrabajos frecuentes en reportes, análisis o entregables críticos para la operación?' },
+  { dimension: 'Toma de decisiones', texto: '¿Se toman decisiones relevantes basándose principalmente en intuición o percepciones, en lugar de información objetiva y datos del proceso?' },
+  { dimension: 'Estabilidad de las prioridades', texto: '¿Las prioridades cambian constantemente sin criterios claros que permitan justificar dichos cambios?' },
+  { dimension: 'Resolución de problemas', texto: 'Problemas "ya resueltos" ¿vuelven a aparecer semanas o meses después en la operación?' },
+  { dimension: 'Interrupciones operativas', texto: '¿Las interrupciones del día a día son frecuentes y afectan de manera recurrente la agenda y las actividades previamente planificadas?' },
+  { dimension: 'Enfoque en la ejecución', texto: '¿Tu equipo dedica una parte importante de su tiempo a "apagar incendios" en lugar de ejecutar prioridades estratégicas?' },
+  { dimension: 'Capacidad organizacional', texto: '¿Tu equipo manifiesta señales frecuentes de agotamiento, saturación o resistencia ante nuevas iniciativas y cambios?' }
+];
+
+// BORRADOR: el cuerpo de cada resultado debe sustituirse, palabra por palabra, por el texto
+// aprobado del documento fuente (versión larga). Los campos ya siguen el modelo de la sección 5.
+var RESULTADOS = {
+  rojo: {
+    clave: 'rojo',
+    clasificacion: 'Ceguera Operativa Severa',
+    nivel: 'Alerta Roja',
+    titular: 'Recupera el foco de tu organización antes de que la dispersión se convierta en un costo estructural de mayor impacto.',
+    interpretacion: [
+      'El resultado del test indica que tu organización presenta un nivel severo de ceguera operativa: la mayoría de las señales de dispersión evaluadas están presentes al mismo tiempo. La energía del equipo se reparte entre demasiados frentes, las prioridades compiten entre sí y buena parte del día se dedica a reaccionar en lugar de ejecutar.',
+      'Este nivel de dispersión tiene un impacto financiero directo: horas invertidas en retrabajo, reuniones que no generan acuerdos, decisiones que se corrigen tarde y problemas que regresan. Cada uno de estos síntomas consume capacidad que ya se paga y que no se convierte en resultados.'
+    ],
+    perspectivaRH: [
+      'Desde la perspectiva de Recursos Humanos, este escenario suele manifestarse en agotamiento, rotación de talento clave, baja adopción de nuevas iniciativas y líderes que dedican su tiempo a contener urgencias en lugar de desarrollar a sus equipos.',
+      'Esta perspectiva permite a Recursos Humanos asumir un papel estratégico: dejar de atender solo los efectos (clima, rotación, ausentismo) y colaborar con la dirección para atacar las causas operativas que los generan.'
+    ],
+    principalDesafio: [
+      'Recuperar el foco antes de que la dispersión se convierta en un costo estructural: reducir el número de prioridades simultáneas, cerrar el ciclo de los problemas recurrentes y liberar capacidad del equipo para la ejecución estratégica.'
+    ],
+    recomendacionPEAK: [
+      'Iniciar con un diagnóstico PPOF que identifique las principales fuentes de dispersión, cuantifique su impacto y establezca pocas prioridades con responsables, indicadores y rutinas de seguimiento claras.',
+      'En paralelo, acompañar a los líderes en reuniones efectivas, tableros operativos enfocados y solución de problemas de raíz, para que las mejoras se sostengan en la operación diaria.'
+    ],
+    siguientePaso: [
+      'El siguiente paso es validar estos hallazgos con datos de tu operación y definir un plan de acción de corto plazo que libere capacidad en las próximas semanas.'
+    ]
+  },
+  amarillo: {
+    clave: 'amarillo',
+    clasificacion: 'Distracción Moderada',
+    nivel: 'Alerta Amarilla',
+    titular: 'Optimiza tus procesos para escalar de forma rentable.',
+    interpretacion: [
+      'El resultado del test indica que tu organización mantiene una base operativa funcional, pero presenta señales de distracción que ya afectan su capacidad de ejecución. Algunas prioridades se diluyen, ciertos problemas se repiten y parte del tiempo del equipo se va en actividades que no agregan valor.',
+      'Si estas señales no se atienden, tienden a crecer con la organización: lo que hoy es una fricción moderada se convierte en un freno para escalar de forma rentable.'
+    ],
+    perspectivaRH: [
+      'Desde la perspectiva de Recursos Humanos, este es el momento de mayor oportunidad: el equipo todavía tiene energía y disposición, pero empieza a mostrar signos de saturación en áreas específicas.',
+      'Recursos Humanos puede anticiparse y, junto con la operación, fortalecer las capacidades de priorización y seguimiento de los líderes antes de que la distracción afecte el clima y la retención.'
+    ],
+    principalDesafio: [
+      'Convertir una operación que funciona en una operación enfocada: eliminar las fuentes de distracción recurrentes y ordenar las prioridades para que el crecimiento no multiplique la complejidad.'
+    ],
+    recomendacionPEAK: [
+      'Aplicar un diagnóstico PPOF enfocado en las dimensiones con señales de alerta, para priorizar pocas mejoras de alto impacto y medir su efecto con indicadores claros.',
+      'Complementarlo con rutinas de gestión sencillas (reuniones con acuerdos, tableros con pocos KPIs relevantes y seguimiento semanal) que el equipo pueda sostener por sí mismo.'
+    ],
+    siguientePaso: [
+      'El siguiente paso es identificar cuáles de las señales detectadas tienen mayor costo para tu operación y atenderlas primero.'
+    ]
+  },
+  verde: {
+    clave: 'verde',
+    clasificacion: 'Enfoque de Alto Rendimiento',
+    nivel: 'Operación Saludable',
+    titular: 'Convierte tu enfoque operativo en una ventaja competitiva sostenible.',
+    interpretacion: [
+      '¡Felicidades! El resultado del test indica que tu organización mantiene un enfoque operativo sólido: las prioridades son claras, las decisiones se apoyan en información y el equipo dedica la mayor parte de su tiempo a ejecutar lo importante.',
+      'Este nivel de enfoque es una base valiosa. El reto ahora es sostenerlo mientras la organización crece y enfrenta nuevas exigencias del mercado.'
+    ],
+    perspectivaRH: [
+      'Desde la perspectiva de Recursos Humanos, una operación enfocada es un activo para atraer y retener talento, porque las personas ven con claridad cómo su trabajo contribuye a los resultados.',
+      'Recursos Humanos puede capitalizar este momento para desarrollar a los líderes que sostienen esta disciplina y convertirla en parte de la cultura de la organización.'
+    ],
+    principalDesafio: [
+      'Mantener el enfoque cuando cambien las condiciones: crecimiento, nuevas iniciativas o rotación de líderes pueden introducir dispersión sin que se note a tiempo.'
+    ],
+    recomendacionPEAK: [
+      'Documentar y fortalecer las prácticas que hoy funcionan, y establecer indicadores de alerta temprana que permitan detectar la dispersión antes de que afecte los resultados.'
+    ],
+    siguientePaso: [
+      'El siguiente paso es identificar las oportunidades de mejora que pueden llevar tu operación del buen desempeño a una ventaja competitiva sostenible.'
+    ]
+  }
+};
+
+var TEXTO_CIERRE = 'Agenda una sesión de diagnóstico sin costo y descubre cómo la metodología PPOF puede ayudarte a identificar las principales fuentes de dispersión operativa y sus oportunidades de mejora.';
+var TEXTO_CTA = 'Habla con un consultor de PEAK LATAM, descubre como podemos apoyarte y agenda un diagnóstico sin costo. ¡Hablemos!';
+
+/* =========================================================================
+   LÓGICA DE PUNTUACIÓN (pura y determinista)
+   ========================================================================= */
+function calcularPuntaje(respuestas) {
+  var n = 0;
+  for (var i = 0; i < respuestas.length; i++) if (respuestas[i] === true) n++;
+  return n;
+}
+function clasificar(puntaje) {
+  if (typeof puntaje !== 'number' || puntaje < 0 || puntaje > 10 || puntaje % 1 !== 0) throw new RangeError('Puntaje fuera de rango: ' + puntaje);
+  if (puntaje >= 7) return RESULTADOS.rojo;
+  if (puntaje >= 4) return RESULTADOS.amarillo;
+  return RESULTADOS.verde;
+}
+
+/* =========================================================================
+   UTILIDADES
+   ========================================================================= */
+var almacen = {
+  leer: function (tipo, clave) {
+    try { var v = window[tipo].getItem(clave); return v ? JSON.parse(v) : null; } catch (e) { return null; }
+  },
+  escribir: function (tipo, clave, valor) {
+    try { window[tipo].setItem(clave, JSON.stringify(valor)); return true; } catch (e) { return false; }
+  },
+  borrar: function (tipo, clave) {
+    try { window[tipo].removeItem(clave); } catch (e) { /* sin almacenamiento */ }
+  }
+};
+
+function uuid() {
+  try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) { /* contexto no seguro */ }
+  var b = new Uint8Array(16);
+  try { crypto.getRandomValues(b); } catch (e) { for (var i = 0; i < 16; i++) b[i] = Math.floor(Math.random() * 256); }
+  b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+  var h = Array.prototype.map.call(b, function (x) { return (x + 256).toString(16).slice(1); }).join('');
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+}
+
+function dos(n) { return (n < 10 ? '0' : '') + n; }
+function fechaISOLocal(d) {
+  var off = -d.getTimezoneOffset();
+  var signo = off >= 0 ? '+' : '-';
+  off = Math.abs(off);
+  return d.getFullYear() + '-' + dos(d.getMonth() + 1) + '-' + dos(d.getDate()) + 'T' +
+    dos(d.getHours()) + ':' + dos(d.getMinutes()) + ':' + dos(d.getSeconds()) +
+    signo + dos(Math.floor(off / 60)) + ':' + dos(off % 60);
+}
+function fechaCorta(d) { return d.getFullYear() + '-' + dos(d.getMonth() + 1) + '-' + dos(d.getDate()); }
+var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+function fechaLarga(d) { return d.getDate() + ' de ' + MESES[d.getMonth()] + ' de ' + d.getFullYear(); }
+
+function textoVisible(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+function largoVisible(s) { return Array.from(textoVisible(s)).length; }
+var RE_CORREO = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
+
+function $(id) { return document.getElementById(id); }
+function anunciar(texto) {
+  var r = $('anuncio');
+  r.textContent = '';
+  setTimeout(function () { r.textContent = texto; }, 50);
+}
+function parrafos(contenedor, lista) {
+  contenedor.textContent = '';
+  lista.forEach(function (t) { var p = document.createElement('p'); p.textContent = t; contenedor.appendChild(p); });
+}
+
+/* Íconos del semáforo: la forma cambia con el nivel (círculo, triángulo, verificación). */
+function iconoSVG(clave) {
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 56 56');
+  svg.setAttribute('class', 'icono-semaforo');
+  svg.setAttribute('aria-hidden', 'true');
+  var html;
+  if (clave === 'rojo') {
+    html = '<circle cx="28" cy="28" r="24" fill="#B3261E"/><rect x="25" y="14" width="6" height="18" rx="3" fill="#FFFFFF"/><circle cx="28" cy="40" r="3.5" fill="#FFFFFF"/>';
+  } else if (clave === 'amarillo') {
+    html = '<path d="M28 5 L53 49 H3 Z" fill="#F2B705" stroke="#B98C00" stroke-width="2" stroke-linejoin="round"/><rect x="25.5" y="20" width="5" height="15" rx="2.5" fill="#0F1B2D"/><circle cx="28" cy="41" r="3" fill="#0F1B2D"/>';
+  } else {
+    html = '<circle cx="28" cy="28" r="24" fill="#17703F"/><path d="M16 29 L24.5 37.5 L40 20" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
+  svg.innerHTML = html;
+  return svg;
+}
+
+/* =========================================================================
+   CAPACIDADES DE CLAUDE (solo si la página se abre como Artifact en claude.ai)
+   ========================================================================= */
+var capacidades = { downloads: Promise.resolve(null), db: Promise.resolve(null), user: Promise.resolve(null) };
+try {
+  if (window.claude && typeof window.claude.use === 'function') {
+    ['downloads', 'db', 'user'].forEach(function (n) {
+      capacidades[n] = window.claude.use(n).catch(function () { return null; });
+    });
+  }
+} catch (e) { /* fuera de claude.ai */ }
+
+/* =========================================================================
+   ESTADO
+   ========================================================================= */
+var CLAVE_SESION = 'ppof_estado';
+var CLAVE_COLA = 'ppof_cola';
+var estado = estadoInicial();
+function estadoInicial() {
+  return { pantalla: 'registro', registro: null, respuestas: [null, null, null, null, null, null, null, null, null, null], indice: 0, inicio: null, fin: null, idLead: null, leadEnviado: false };
+}
+function guardarSesion() { almacen.escribir('sessionStorage', CLAVE_SESION, estado); }
+
+/* =========================================================================
+   NAVEGACIÓN ENTRE PANTALLAS
+   ========================================================================= */
+var PANTALLAS = { registro: 'pantalla-registro', test: 'pantalla-test', resultado: 'pantalla-resultado' };
+function mostrarPantalla(nombre, enfocar) {
+  Object.keys(PANTALLAS).forEach(function (k) { $(PANTALLAS[k]).hidden = (k !== nombre); });
+  estado.pantalla = nombre;
+  guardarSesion();
+  if (enfocar !== false) {
+    var titulo = { registro: 'titulo-registro', test: 'titulo-pregunta', resultado: 'titulo-resultado' }[nombre];
+    $(titulo).focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+}
+
+/* =========================================================================
+   PANTALLA 1: REGISTRO
+   ========================================================================= */
+function configurarPrivacidad() {
+  var etiqueta = $('etiqueta-privacidad');
+  etiqueta.textContent = '';
+  etiqueta.appendChild(document.createTextNode('Acepto el '));
+  if (/^https?:\/\//.test(CONFIG.avisoPrivacidad)) {
+    var a = document.createElement('a');
+    a.href = CONFIG.avisoPrivacidad; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.textContent = 'aviso de privacidad';
+    etiqueta.appendChild(a);
+  } else {
+    etiqueta.appendChild(document.createTextNode('aviso de privacidad'));
+  }
+  etiqueta.appendChild(document.createTextNode(' de PEAK LATAM y el uso de mis datos para recibir mi resultado.'));
+}
+
+var ICONO_ERROR = '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor"/><rect x="9" y="4.5" width="2" height="7" rx="1" fill="#fff"/><circle cx="10" cy="14.5" r="1.2" fill="#fff"/></svg>';
+function marcarCampo(id, mensaje) {
+  var input = $(id), err = $('error-' + id), campo = $('campo-' + id);
+  if (mensaje) {
+    err.innerHTML = ICONO_ERROR;
+    var s = document.createElement('span'); s.textContent = mensaje; err.appendChild(s);
+    err.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+    campo.classList.remove('valido');
+  } else {
+    err.hidden = true; err.textContent = '';
+    input.removeAttribute('aria-invalid');
+    if (input.type !== 'checkbox') campo.classList.add('valido');
+  }
+}
+function validarRegistro() {
+  var errores = [];
+  var nombre = $('nombre').value, empresa = $('empresa').value, correo = $('correo').value.trim();
+  var r = {
+    nombre: largoVisible(nombre) >= 2 ? null : 'Escribe tu nombre (al menos 2 caracteres).',
+    empresa: largoVisible(empresa) >= 2 ? null : 'Escribe el nombre de tu empresa (al menos 2 caracteres).',
+    correo: correo === '' ? 'Escribe tu correo electrónico.' : (RE_CORREO.test(correo) ? null : 'Escribe un correo válido, por ejemplo nombre@empresa.com.'),
+    privacidad: $('privacidad').checked ? null : 'Para continuar, acepta el aviso de privacidad.'
+  };
+  ['nombre', 'empresa', 'correo', 'privacidad'].forEach(function (k) { marcarCampo(k, r[k]); if (r[k]) errores.push(k); });
+  return { errores: errores, datos: { nombre: textoVisible(nombre), empresa: textoVisible(empresa), correo: correo, consentimiento: true } };
+}
+$('form-registro').addEventListener('submit', function (ev) {
+  ev.preventDefault();
+  var v = validarRegistro();
+  if (v.errores.length) {
+    $(v.errores[0]).focus();
+    anunciar('Revisa el formulario: ' + v.errores.length + (v.errores.length === 1 ? ' campo con error.' : ' campos con error.'));
+    return;
+  }
+  estado.registro = v.datos;
+  estado.respuestas = [null, null, null, null, null, null, null, null, null, null];
+  estado.indice = 0;
+  estado.inicio = Date.now();
+  estado.fin = null; estado.idLead = null; estado.leadEnviado = false;
+  renderPregunta();
+  mostrarPantalla('test');
+});
+['nombre', 'empresa', 'correo'].forEach(function (id) {
+  $(id).addEventListener('input', function () { if ($(id).getAttribute('aria-invalid') === 'true') marcarCampo(id, null); });
+});
+$('privacidad').addEventListener('change', function () { if ($('privacidad').checked) marcarCampo('privacidad', null); });
+
+/* =========================================================================
+   PANTALLA 2: TEST
+   ========================================================================= */
+var bloqueado = false;
+function renderPregunta() {
+  var i = estado.indice, p = PREGUNTAS[i];
+  var respondidas = estado.respuestas.filter(function (r) { return r !== null; }).length;
+  $('texto-progreso').textContent = 'Pregunta ' + (i + 1) + ' de 10';
+  $('porcentaje-progreso').textContent = (respondidas * 10) + '%';
+  $('barra-relleno').style.width = (respondidas * 10) + '%';
+  $('barra-progreso').setAttribute('aria-valuenow', String(respondidas));
+  $('barra-progreso').setAttribute('aria-valuetext', respondidas + ' de 10 preguntas respondidas');
+  $('dimension').textContent = p.dimension;
+  $('titulo-pregunta').textContent = p.texto;
+  $('resp-si').setAttribute('aria-pressed', String(estado.respuestas[i] === true));
+  $('resp-no').setAttribute('aria-pressed', String(estado.respuestas[i] === false));
+  $('boton-anterior').hidden = (i === 0);
+}
+function responder(valor) {
+  if (bloqueado || estado.pantalla !== 'test') return;
+  bloqueado = true;
+  var i = estado.indice;
+  estado.respuestas[i] = valor;
+  $('resp-si').setAttribute('aria-pressed', String(valor === true));
+  $('resp-no').setAttribute('aria-pressed', String(valor === false));
+  guardarSesion();
+  setTimeout(function () {
+    bloqueado = false;
+    if (i < PREGUNTAS.length - 1) {
+      estado.indice = i + 1;
+      renderPregunta();
+      guardarSesion();
+      $('titulo-pregunta').focus({ preventScroll: true });
+      anunciar('Pregunta ' + (estado.indice + 1) + ' de 10. ' + PREGUNTAS[estado.indice].dimension + '.');
+    } else {
+      finalizarTest();
+    }
+  }, 250);
+}
+$('resp-si').addEventListener('click', function () { responder(true); });
+$('resp-no').addEventListener('click', function () { responder(false); });
+$('boton-anterior').addEventListener('click', function () {
+  if (bloqueado || estado.indice === 0) return;
+  estado.indice--;
+  renderPregunta();
+  guardarSesion();
+  $('titulo-pregunta').focus({ preventScroll: true });
+  anunciar('Pregunta ' + (estado.indice + 1) + ' de 10. ' + PREGUNTAS[estado.indice].dimension + '.');
+});
+document.addEventListener('keydown', function (ev) {
+  if (estado.pantalla !== 'test' || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  var t = ev.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+  var k = (ev.key || '').toLowerCase();
+  if (k === 's') { ev.preventDefault(); responder(true); }
+  else if (k === 'n') { ev.preventDefault(); responder(false); }
+});
+
+/* =========================================================================
+   PANTALLA 3: RESULTADO
+   ========================================================================= */
+function resultadoActual() {
+  var puntaje = calcularPuntaje(estado.respuestas);
+  var r = clasificar(puntaje);
+  var senales = [];
+  estado.respuestas.forEach(function (v, i) { if (v === true) senales.push(PREGUNTAS[i].dimension); });
+  return { puntaje: puntaje, r: r, senales: senales, fecha: new Date(estado.fin || Date.now()) };
+}
+
+function finalizarTest() {
+  if (estado.respuestas.some(function (r) { return r === null; })) {
+    // RF-09: no se puede omitir ninguna pregunta.
+    estado.indice = estado.respuestas.indexOf(null);
+    renderPregunta();
+    return;
+  }
+  estado.fin = Date.now();
+  if (!estado.idLead) estado.idLead = uuid();
+  renderResultado();
+  mostrarPantalla('resultado');
+  anunciar('Resultado: ' + resultadoActual().r.clasificacion + '.');
+  if (!estado.leadEnviado) {
+    estado.leadEnviado = true;
+    guardarSesion();
+    enviar('lead', construirLead());
+  }
+}
+
+function enlaceWhatsApp(res) {
+  var w = (CONFIG.whatsapp || '').trim();
+  if (!w) return '';
+  var mensaje = 'Hola, soy ' + estado.registro.nombre + ' de ' + estado.registro.empresa +
+    '. Hice el Test PPOF y obtuve ' + res.puntaje + ' de 10: ' + res.r.clasificacion + ' (' + res.r.nivel + '). Me gustaría agendar un diagnóstico sin costo.';
+  var base = /^https?:\/\//.test(w) ? w : 'https://wa.me/' + w.replace(/\D/g, '');
+  return base + (base.indexOf('?') >= 0 ? '&' : '?') + 'text=' + encodeURIComponent(mensaje);
+}
+
+function renderResultado() {
+  var res = resultadoActual(), r = res.r;
+  var bloque = $('resultado-bloque');
+  bloque.className = 'resultado-bloque ' + r.clave;
+  var ic = $('icono-resultado'); ic.textContent = ''; ic.appendChild(iconoSVG(r.clave));
+  $('resultado-puntaje').textContent = res.puntaje + ' de 10';
+  $('resultado-clasificacion').textContent = r.clasificacion;
+  $('resultado-nivel').textContent = r.nivel;
+  $('resultado-titular').textContent = r.titular;
+
+  var medidor = $('medidor');
+  medidor.className = 'medidor ' + r.clave;
+  medidor.textContent = '';
+  for (var i = 0; i < 10; i++) {
+    var s = document.createElement('span');
+    if (i < res.puntaje) s.className = 'lleno';
+    medidor.appendChild(s);
+  }
+  medidor.setAttribute('aria-label', res.puntaje + ' de 10 señales de dispersión');
+
+  parrafos($('resultado-interpretacion'), r.interpretacion);
+  parrafos($('resultado-rh'), r.perspectivaRH);
+  parrafos($('resultado-desafio'), r.principalDesafio);
+  parrafos($('resultado-recomendacion'), r.recomendacionPEAK);
+  parrafos($('resultado-siguiente'), r.siguientePaso);
+
+  var lista = $('lista-senales'); lista.textContent = '';
+  res.senales.forEach(function (d) { var li = document.createElement('li'); li.textContent = d; lista.appendChild(li); });
+  $('bloque-senales').hidden = res.senales.length === 0;
+
+  $('texto-cierre').textContent = TEXTO_CIERRE;
+  $('texto-cta').textContent = TEXTO_CTA;
+  var wa = enlaceWhatsApp(res), boton = $('boton-whatsapp');
+  if (wa) {
+    boton.href = wa; boton.removeAttribute('aria-disabled'); boton.removeAttribute('tabindex');
+    $('aviso-whatsapp').hidden = true;
+    $('enlace-impreso').textContent = 'WhatsApp: ' + wa;
+  } else {
+    boton.removeAttribute('href'); boton.setAttribute('aria-disabled', 'true');
+    $('aviso-whatsapp').hidden = false;
+    $('enlace-impreso').textContent = '';
+    console.warn('[Test PPOF] CONFIG.whatsapp está vacío: el botón de WhatsApp no tiene destino.');
+  }
+
+  var pie = $('pie-contacto'); pie.textContent = '';
+  var fuerte = document.createElement('strong'); fuerte.textContent = CONFIG.contacto.empresa; pie.appendChild(fuerte);
+  pie.appendChild(document.createTextNode(' · ' + CONFIG.contacto.filial));
+  [CONFIG.contacto.direccion, CONFIG.contacto.telefono + ' · ' + CONFIG.contacto.correo].forEach(function (t) {
+    pie.appendChild(document.createElement('br')); pie.appendChild(document.createTextNode(t));
+  });
+
+  $('mensaje-pdf').hidden = true;
+}
+
+$('boton-whatsapp').addEventListener('click', function (ev) {
+  if (this.getAttribute('aria-disabled') === 'true') { ev.preventDefault(); return; }
+  enviar('clic_whatsapp', construirEvento('clic_whatsapp'));
+});
+$('boton-repetir').addEventListener('click', function () {
+  estado.respuestas = [null, null, null, null, null, null, null, null, null, null];
+  estado.indice = 0; estado.inicio = Date.now(); estado.fin = null; estado.idLead = null; estado.leadEnviado = false;
+  renderPregunta();
+  mostrarPantalla('test');
+});
+
+/* =========================================================================
+   ENVÍO DEL LEAD Y EVENTOS (con cola local y reintentos)
+   ========================================================================= */
+function construirLead() {
+  var res = resultadoActual(), resp = {};
+  estado.respuestas.forEach(function (v, i) { resp[String(i + 1)] = v === true; });
+  return {
+    idLead: estado.idLead,
+    nombre: estado.registro.nombre,
+    empresa: estado.registro.empresa,
+    correo: estado.registro.correo,
+    puntaje: res.puntaje,
+    clasificacion: res.r.clasificacion,
+    nivel: res.r.nivel,
+    respuestas: resp,
+    consentimiento: estado.registro.consentimiento === true,
+    duracionSegundos: Math.max(0, Math.round(((estado.fin || Date.now()) - (estado.inicio || Date.now())) / 1000)),
+    fecha: fechaISOLocal(new Date(estado.fin || Date.now())),
+    origen: 'test-ppof',
+    version: CONFIG.version
+  };
+}
+function construirEvento(nombre) {
+  return { evento: nombre, idLead: estado.idLead, fecha: fechaISOLocal(new Date()), origen: 'test-ppof', version: CONFIG.version };
+}
+
+var avisoSinDestino = false;
+function destinoValido() { return /^https:\/\/[^\s]+$/i.test((CONFIG.endpointLead || '').trim()); }
+var colaMemoria = null; // se usa solo si localStorage no está disponible
+function leerCola() {
+  var c = almacen.leer('localStorage', CLAVE_COLA);
+  if (Array.isArray(c)) return c;
+  return colaMemoria || [];
+}
+function escribirCola(c) {
+  if (almacen.escribir('localStorage', CLAVE_COLA, c)) { colaMemoria = null; return; }
+  if (!colaMemoria) console.warn('[Test PPOF] localStorage no disponible: si el envío falla, el registro se perderá al cerrar la página.');
+  colaMemoria = c;
+}
+function encolar(clave, datos) {
+  var c = leerCola();
+  if (!c.some(function (x) { return x.clave === clave; })) c.push({ clave: clave, datos: datos });
+  escribirCola(c);
+}
+function quitarDeCola(clave) {
+  var c = leerCola().filter(function (x) { return x.clave !== clave; });
+  if (c.length) escribirCola(c); else { almacen.borrar('localStorage', CLAVE_COLA); colaMemoria = null; }
+}
+
+function enviar(tipo, datos) {
+  var clave = tipo === 'lead' ? datos.idLead : datos.idLead + ':' + tipo;
+  guardarEnClaude(clave, tipo, datos);
+  if (!destinoValido()) {
+    if (!avisoSinDestino) {
+      avisoSinDestino = true;
+      console.warn('[Test PPOF] CONFIG.endpointLead está vacío o no es una URL https: el lead no se envía a ningún webhook.');
+    }
+    return;
+  }
+  encolar(clave, datos);
+  procesarCola();
+}
+
+var procesando = false;
+function procesarCola() {
+  if (procesando || !destinoValido()) return;
+  var cola = leerCola();
+  if (!cola.length) return;
+  procesando = true;
+  var pendiente = cola.slice();
+  (function siguiente() {
+    var item = pendiente.shift();
+    if (!item) { procesando = false; return; }
+    publicar(item.datos).then(function () { quitarDeCola(item.clave); siguiente(); },
+      function (e) { console.warn('[Test PPOF] Envío pendiente; se reintentará más tarde.', e && e.message); procesando = false; });
+  })();
+}
+function publicar(datos) {
+  var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+  var t = ctrl ? setTimeout(function () { ctrl.abort(); }, 10000) : null;
+  // text/plain + no-cors: petición simple, sin preflight; muchos webhooks no responden CORS.
+  return fetch(CONFIG.endpointLead.trim(), {
+    method: 'POST', mode: 'no-cors', keepalive: true,
+    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    body: JSON.stringify(datos),
+    signal: ctrl ? ctrl.signal : undefined
+  }).then(function (r) {
+    if (t) clearTimeout(t);
+    if (r.type !== 'opaque' && !r.ok) throw new Error('HTTP ' + r.status);
+  }, function (e) { if (t) clearTimeout(t); throw e; });
+}
+window.addEventListener('online', procesarCola);
+
+/* Dentro de claude.ai el registro se guarda también en la base de datos del Artifact. */
+function guardarEnClaude(clave, tipo, datos) {
+  Promise.all([capacidades.db, capacidades.user]).then(function (caps) {
+    var db = caps[0], user = caps[1];
+    if (!db || !user) return;
+    return user.id().then(function (uid) {
+      if (!uid) return;
+      var coleccion = tipo === 'lead' ? 'registros' : 'eventos';
+      var id = clave.replace(/[^A-Za-z0-9_\-.~:@+]/g, '-');
+      return db.doc('leads/' + uid).collection(coleccion).doc(id).set(datos);
+    });
+  }).catch(function (e) { console.warn('[Test PPOF] No se pudo guardar el registro en claude.ai.', e && (e.code || e.message)); });
+}
+
+/* =========================================================================
+   ESCRITOR DE PDF PROPIO (PDF 1.4, Helvetica estándar, WinAnsiEncoding)
+   ========================================================================= */
+var AnchoHelv = '278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500'.split(',').map(Number);
+var AnchoHelvB = '278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556'.split(',').map(Number);
+// Caracteres Unicode que WinAnsi coloca en 0x80–0x9F.
+var WIN_EXTRA = { 0x20AC: 0x80, 0x201A: 0x82, 0x0192: 0x83, 0x201E: 0x84, 0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87, 0x02C6: 0x88, 0x2030: 0x89, 0x0160: 0x8A, 0x2039: 0x8B, 0x0152: 0x8C, 0x017D: 0x8E, 0x2018: 0x91, 0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97, 0x02DC: 0x98, 0x2122: 0x99, 0x0161: 0x9A, 0x203A: 0x9B, 0x0153: 0x9C, 0x017E: 0x9E, 0x0178: 0x9F };
+
+/* Convierte texto a una "cadena binaria" WinAnsi (1 carácter = 1 byte). Lo que no cabe se vuelve "?". */
+function aWinAnsi(texto) {
+  var s = '';
+  var cadena = String(texto == null ? '' : texto);
+  if (cadena.normalize) cadena = cadena.normalize('NFC');
+  for (var ch of cadena) {
+    var cp = ch.codePointAt(0);
+    if (cp === 0x09 || cp === 0x0A || cp === 0x0D) { s += ' '; continue; }
+    if (cp >= 0xFE00 && cp <= 0xFE0F || cp === 0x200D) continue; // selectores de variación / unión de emoji
+    if (cp >= 0x20 && cp <= 0x7E) s += ch;
+    else if (cp >= 0xA0 && cp <= 0xFF) s += String.fromCharCode(cp);
+    else if (WIN_EXTRA[cp]) s += String.fromCharCode(WIN_EXTRA[cp]);
+    else s += '?';
+  }
+  return s;
+}
+function anchoTexto(bin, tam, negrita) {
+  var tabla = negrita ? AnchoHelvB : AnchoHelv, w = 0;
+  for (var i = 0; i < bin.length; i++) {
+    var c = bin.charCodeAt(i);
+    w += (c >= 32 ? tabla[c - 32] : 0) || 556;
+  }
+  return w * tam / 1000;
+}
+function escaparPDF(bin) {
+  var s = '';
+  for (var i = 0; i < bin.length; i++) {
+    var c = bin.charCodeAt(i), ch = bin[i];
+    if (ch === '\\' || ch === '(' || ch === ')') s += '\\' + ch;
+    else if (c < 32 || c > 126) s += '\\' + ('00' + c.toString(8)).slice(-3);
+    else s += ch;
+  }
+  return s;
+}
+/* Parte un texto en líneas que caben en `ancho`. Las palabras más largas que la línea se cortan. */
+function partirLineas(bin, tam, negrita, ancho) {
+  var palabras = bin.split(' ').filter(function (p) { return p.length; });
+  var lineas = [], actual = '';
+  palabras.forEach(function (p) {
+    var prueba = actual ? actual + ' ' + p : p;
+    if (anchoTexto(prueba, tam, negrita) <= ancho) { actual = prueba; return; }
+    if (actual) lineas.push(actual);
+    while (anchoTexto(p, tam, negrita) > ancho) {
+      var k = p.length;
+      while (k > 1 && anchoTexto(p.slice(0, k), tam, negrita) > ancho) k--;
+      lineas.push(p.slice(0, k)); p = p.slice(k);
+    }
+    actual = p;
+  });
+  if (actual) lineas.push(actual);
+  return lineas.length ? lineas : [''];
+}
+function hexUTF16(texto) {
+  var h = 'FEFF';
+  for (var i = 0; i < texto.length; i++) h += ('000' + texto.charCodeAt(i).toString(16).toUpperCase()).slice(-4);
+  return '<' + h + '>';
+}
+function rgb(hex) {
+  var n = parseInt(hex.slice(1), 16);
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255].map(function (v) { return +v.toFixed(3); });
+}
+function colorOp(hex, trazo) { return rgb(hex).join(' ') + (trazo ? ' RG' : ' rg'); }
+
+var COLORES_PDF = {
+  marca: '#0B3A6F', texto: '#0F1B2D', suave: '#4A5568', borde: '#D5DCE5', tarjeta: '#F5F7FA',
+  rojo: '#B3261E', rojoSuave: '#FBE9E7', amarillo: '#F2B705', amarilloOscuro: '#B98C00', amarilloSuave: '#FFF6D6',
+  verde: '#17703F', verdeSuave: '#E5F3EA', blanco: '#FFFFFF'
+};
+
+/* Construye el documento a partir del mismo contenido que la pantalla. */
+function generarPDF(datos) {
+  var MM = 72 / 25.4;
+  var ANCHO = 612, ALTO = 792, MARGEN = 20 * MM;
+  var X0 = MARGEN, X1 = ANCHO - MARGEN, UTIL = X1 - X0;
+  var TOPE = MARGEN + 26;            // debajo del encabezado
+  var FONDO = ALTO - MARGEN - 34;    // encima del pie
+  var CUERPO = 10.5, INTER = 1.4;
+
+  var paginas = [], pag, y;
+  function nuevaPagina() { pag = { ops: [], links: [] }; paginas.push(pag); y = TOPE; }
+  function op(s) { pag.ops.push(s); }
+  function Y(v) { return (ALTO - v).toFixed(2); }
+  function texto(bin, x, yBase, tam, negrita, color) {
+    op('BT /' + (negrita ? 'F2' : 'F1') + ' ' + tam + ' Tf ' + colorOp(color || COLORES_PDF.texto) + ' ' + x.toFixed(2) + ' ' + Y(yBase) + ' Td (' + escaparPDF(bin) + ') Tj ET');
+  }
+  function rect(x, yTop, w, h, relleno, trazo, grosor) {
+    var s = 'q ';
+    if (relleno) s += colorOp(relleno) + ' ';
+    if (trazo) s += colorOp(trazo, true) + ' ' + (grosor || 1) + ' w ';
+    s += x.toFixed(2) + ' ' + Y(yTop + h) + ' ' + w.toFixed(2) + ' ' + h.toFixed(2) + ' re ' + (relleno && trazo ? 'B' : relleno ? 'f' : 'S') + ' Q';
+    op(s);
+  }
+  function linea(xa, ya, xb, yb, color, grosor) {
+    op('q ' + colorOp(color, true) + ' ' + grosor + ' w ' + xa.toFixed(2) + ' ' + Y(ya) + ' m ' + xb.toFixed(2) + ' ' + Y(yb) + ' l S Q');
+  }
+  function circulo(cx, cy, r, relleno) {
+    var k = 0.5523 * r, py = ALTO - cy;
+    function p(a, b) { return a.toFixed(2) + ' ' + b.toFixed(2); }
+    op('q ' + colorOp(relleno) + ' ' + p(cx + r, py) + ' m ' +
+      p(cx + r, py + k) + ' ' + p(cx + k, py + r) + ' ' + p(cx, py + r) + ' c ' +
+      p(cx - k, py + r) + ' ' + p(cx - r, py + k) + ' ' + p(cx - r, py) + ' c ' +
+      p(cx - r, py - k) + ' ' + p(cx - k, py - r) + ' ' + p(cx, py - r) + ' c ' +
+      p(cx + k, py - r) + ' ' + p(cx + r, py - k) + ' ' + p(cx + r, py) + ' c f Q');
+  }
+  function lineasAlto(n, tam) { return n * tam * INTER; }
+
+  // Bloques de texto con salto de página por línea; los subtítulos nunca quedan solos.
+  function parrafo(t, opciones) {
+    opciones = opciones || {};
+    var tam = opciones.tam || CUERPO, negrita = !!opciones.negrita, x = opciones.x || X0, ancho = opciones.ancho || UTIL;
+    var ls = partirLineas(aWinAnsi(t), tam, negrita, ancho);
+    ls.forEach(function (l) {
+      if (y + tam * INTER > FONDO) nuevaPagina();
+      texto(l, x, y + tam, tam, negrita, opciones.color);
+      y += tam * INTER;
+    });
+    y += opciones.despues == null ? 6 : opciones.despues;
+  }
+  function altoParrafos(lista, tam, ancho, negrita) {
+    return lista.reduce(function (a, t) { return a + lineasAlto(partirLineas(aWinAnsi(t), tam, !!negrita, ancho).length, tam) + 6; }, 0);
+  }
+  function subtitulo(t, altoSiguiente) {
+    var alto = 12 * 1.3 + 6;
+    if (y + alto + Math.min(altoSiguiente, lineasAlto(2, CUERPO)) > FONDO) nuevaPagina();
+    texto(aWinAnsi(t), X0, y + 12, 12, true, COLORES_PDF.marca);
+    y += alto;
+  }
+  function seccion(titulo, lista) {
+    subtitulo(titulo, altoParrafos(lista, CUERPO, UTIL));
+    lista.forEach(function (t) { parrafo(t); });
+    y += 6;
+  }
+  // Tarjetas: nunca se parten entre páginas.
+  function tarjeta(titulo, lista, estilo) {
+    estilo = estilo || {};
+    var pad = 12, anchoInt = UTIL - pad * 2;
+    var altoTit = 12 * 1.3 + 6;
+    var alto = pad + altoTit + altoParrafos(lista, CUERPO, anchoInt) - 6 + pad + (estilo.extra || 0);
+    if (y + alto > FONDO) nuevaPagina();
+    rect(X0, y, UTIL, alto, estilo.fondo || COLORES_PDF.tarjeta, estilo.borde || COLORES_PDF.borde, 0.8);
+    var yIni = y;
+    y += pad;
+    texto(aWinAnsi(titulo), X0 + pad, y + 12, 12, true, estilo.colorTitulo || COLORES_PDF.marca);
+    y += altoTit;
+    lista.forEach(function (t, i) { parrafo(t, { x: X0 + pad, ancho: anchoInt, despues: i === lista.length - 1 ? 0 : 6, color: estilo.colorTexto }); });
+    if (estilo.alFinal) estilo.alFinal(X0 + pad, anchoInt);
+    y = yIni + alto + 14;
+  }
+
+  var r = datos.r, clave = r.clave;
+  var tono = { rojo: [COLORES_PDF.rojoSuave, COLORES_PDF.rojo, COLORES_PDF.rojo], amarillo: [COLORES_PDF.amarilloSuave, COLORES_PDF.amarilloOscuro, COLORES_PDF.texto], verde: [COLORES_PDF.verdeSuave, COLORES_PDF.verde, COLORES_PDF.verde] }[clave];
+
+  nuevaPagina();
+  // Página 1: título, datos y bloque de resultado.
+  texto(aWinAnsi('Resultado del Test PPOF'), X0, y + 20, 20, true, COLORES_PDF.marca);
+  y += 32;
+  parrafo('Nombre: ' + datos.nombre, { despues: 0 });
+  parrafo('Empresa: ' + datos.empresa, { despues: 0 });
+  parrafo('Fecha: ' + fechaLarga(datos.fecha), { despues: 14 });
+
+  var altoBloque = 118;
+  rect(X0, y, UTIL, altoBloque, tono[0], tono[1], 1.2);
+  var cx = X0 + 40, cy = y + 44;
+  if (clave === 'rojo') {
+    circulo(cx, cy, 22, COLORES_PDF.rojo);
+    rect(cx - 2.6, cy - 13, 5.2, 16, COLORES_PDF.blanco);
+    circulo(cx, cy + 9, 3, COLORES_PDF.blanco);
+  } else if (clave === 'amarillo') {
+    op('q ' + colorOp(COLORES_PDF.amarillo) + ' ' + colorOp(COLORES_PDF.amarilloOscuro, true) + ' 1.5 w 1 j ' +
+      cx.toFixed(2) + ' ' + Y(cy - 22) + ' m ' + (cx + 24).toFixed(2) + ' ' + Y(cy + 19) + ' l ' + (cx - 24).toFixed(2) + ' ' + Y(cy + 19) + ' l h B Q');
+    rect(cx - 2.2, cy - 9, 4.4, 14, COLORES_PDF.texto);
+    circulo(cx, cy + 11, 2.6, COLORES_PDF.texto);
+  } else {
+    circulo(cx, cy, 22, COLORES_PDF.verde);
+    op('q ' + colorOp(COLORES_PDF.blanco, true) + ' 4.5 w 1 J 1 j ' + (cx - 10).toFixed(2) + ' ' + Y(cy + 1) + ' m ' + (cx - 3).toFixed(2) + ' ' + Y(cy + 8) + ' l ' + (cx + 11).toFixed(2) + ' ' + Y(cy - 8) + ' l S Q');
+  }
+  var tx = X0 + 80, anchoTx = X1 - 16 - tx;
+  texto(aWinAnsi(datos.puntaje + ' de 10'), tx, y + 30, 22, true, COLORES_PDF.texto);
+  var lineasClas = partirLineas(aWinAnsi(r.clasificacion), 14, true, anchoTx);
+  texto(lineasClas[0], tx, y + 50, 14, true, COLORES_PDF.texto);
+  texto(aWinAnsi('Nivel: ' + r.nivel), tx, y + 68, 11, true, tono[2]);
+  // Medidor de 10 segmentos.
+  var gy = y + 86, gap = 4, gw = (UTIL - 32 - gap * 9) / 10;
+  for (var i = 0; i < 10; i++) {
+    var gx = X0 + 16 + i * (gw + gap);
+    if (i < datos.puntaje) rect(gx, gy, gw, 10, clave === 'amarillo' ? COLORES_PDF.amarillo : tono[1], clave === 'amarillo' ? COLORES_PDF.amarilloOscuro : tono[1], 0.8);
+    else rect(gx, gy, gw, 10, COLORES_PDF.blanco, COLORES_PDF.borde, 0.8);
+  }
+  texto(aWinAnsi(datos.puntaje + ' de 10 señales de dispersión'), X0 + 16, gy + 22, 8.5, false, COLORES_PDF.suave);
+  y += altoBloque + 16;
+
+  parrafo(r.titular, { tam: 12, negrita: true, despues: 12 });
+  seccion('Interpretación', r.interpretacion);
+  seccion('Perspectiva de Recursos Humanos', r.perspectivaRH);
+  tarjeta('Principal desafío', r.principalDesafio);
+  tarjeta('Recomendación PEAK', r.recomendacionPEAK);
+  seccion('Siguiente paso', r.siguientePaso);
+  if (datos.senales.length) {
+    var items = datos.senales.map(function (s) { return '• ' + s; });
+    subtitulo('Señales detectadas', lineasAlto(2, CUERPO));
+    parrafo('Dimensiones en las que la respuesta fue «Sí»:', { despues: 4 });
+    items.forEach(function (t) { parrafo(t, { despues: 1, x: X0 + 8, ancho: UTIL - 8 }); });
+    y += 12;
+  }
+  // Cierre con enlace de WhatsApp (texto y enlace clicable).
+  var cierre = [TEXTO_CIERRE, TEXTO_CTA];
+  var waBin = datos.whatsapp ? aWinAnsi(datos.whatsapp) : '';
+  var lineasWa = waBin ? partirLineas(waBin, 9, false, UTIL - 24) : [];
+  var extra = lineasWa.length ? 8 + 12 + lineasWa.length * 9 * INTER : 0;
+  tarjeta('Agenda tu diagnóstico sin costo', cierre, {
+    fondo: '#E7EEF6', borde: COLORES_PDF.marca, extra: extra,
+    alFinal: function (x, ancho) {
+      if (!lineasWa.length) return;
+      y += 8;
+      texto(aWinAnsi('Habla con un consultor por WhatsApp:'), x, y + 10, 10, true, COLORES_PDF.marca);
+      y += 12;
+      var yIni = y;
+      lineasWa.forEach(function (l) { texto(l, x, y + 9, 9, false, COLORES_PDF.marca); y += 9 * INTER; });
+      pag.links.push({ x: x, y: yIni, w: ancho, h: y - yIni + 2, url: datos.whatsapp });
+    }
+  });
+
+  // Encabezado y pie en cada página, con "Página N de M".
+  var total = paginas.length;
+  var contacto1 = aWinAnsi(CONFIG.contacto.empresa + '. ' + CONFIG.contacto.direccion);
+  var contacto2 = aWinAnsi(CONFIG.contacto.telefono + ' · ' + CONFIG.contacto.correo);
+  paginas.forEach(function (p, idx) {
+    pag = p;
+    texto(aWinAnsi('PEAK LATAM'), X0, MARGEN + 10, 10, true, COLORES_PDF.marca);
+    var der = aWinAnsi('Test PPOF');
+    texto(der, X1 - anchoTexto(der, 10, false), MARGEN + 10, 10, false, COLORES_PDF.suave);
+    linea(X0, MARGEN + 16, X1, MARGEN + 16, COLORES_PDF.borde, 0.8);
+    var yp = ALTO - MARGEN - 22;
+    linea(X0, yp, X1, yp, COLORES_PDF.borde, 0.8);
+    var num = aWinAnsi('Página ' + (idx + 1) + ' de ' + total);
+    var anchoNum = anchoTexto(num, 7.5, false);
+    var lineasPie = partirLineas(contacto1 + ' ' + contacto2, 7, false, UTIL - anchoNum - 16);
+    lineasPie.forEach(function (l, k) { texto(l, X0, yp + 10 + k * 8.5, 7, false, COLORES_PDF.suave); });
+    texto(num, X1 - anchoNum, yp + 10, 7.5, false, COLORES_PDF.suave);
+  });
+
+  return serializarPDF(paginas, {
+    titulo: 'Test PPOF - Resultado - ' + datos.empresa,
+    autor: 'PEAK LATAM',
+    fecha: datos.fecha
+  }, ANCHO, ALTO);
+}
+
+function serializarPDF(paginas, meta, ANCHO, ALTO) {
+  var objetos = []; // índice = número de objeto - 1
+  function reservar() { objetos.push(null); return objetos.length; }
+  var nCatalogo = reservar(), nPaginas = reservar(), nF1 = reservar(), nF2 = reservar(), nInfo = reservar();
+  objetos[nF1 - 1] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+  objetos[nF2 - 1] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+  var d = meta.fecha;
+  var off = -d.getTimezoneOffset(), sg = off >= 0 ? '+' : '-'; off = Math.abs(off);
+  var fechaPDF = 'D:' + d.getFullYear() + dos(d.getMonth() + 1) + dos(d.getDate()) + dos(d.getHours()) + dos(d.getMinutes()) + dos(d.getSeconds()) + sg + dos(Math.floor(off / 60)) + "'" + dos(off % 60) + "'";
+  objetos[nInfo - 1] = '<< /Title ' + hexUTF16(meta.titulo) + ' /Author ' + hexUTF16(meta.autor) + ' /Subject ' + hexUTF16('Resultado del Test PPOF') +
+    ' /Creator (Test PPOF v' + CONFIG.version + ') /Producer (Test PPOF) /CreationDate (' + fechaPDF + ') >>';
+  var refsPaginas = [];
+  paginas.forEach(function (p) {
+    var nPag = reservar(), nCont = reservar();
+    var annots = p.links.map(function (l) {
+      var n = reservar();
+      objetos[n - 1] = '<< /Type /Annot /Subtype /Link /Border [0 0 0] /Rect [' + [l.x, ALTO - l.y - l.h, l.x + l.w, ALTO - l.y].map(function (v) { return v.toFixed(2); }).join(' ') +
+        '] /A << /S /URI /URI (' + escaparPDF(aWinAnsi(l.url)) + ') >> >>';
+      return n + ' 0 R';
+    });
+    var contenido = p.ops.join('\n');
+    objetos[nCont - 1] = '<< /Length ' + contenido.length + ' >>\nstream\n' + contenido + '\nendstream';
+    objetos[nPag - 1] = '<< /Type /Page /Parent ' + nPaginas + ' 0 R /MediaBox [0 0 ' + ANCHO + ' ' + ALTO + '] /Resources << /Font << /F1 ' + nF1 + ' 0 R /F2 ' + nF2 + ' 0 R >> >> /Contents ' + nCont + ' 0 R' +
+      (annots.length ? ' /Annots [' + annots.join(' ') + ']' : '') + ' >>';
+    refsPaginas.push(nPag + ' 0 R');
+  });
+  objetos[nPaginas - 1] = '<< /Type /Pages /Kids [' + refsPaginas.join(' ') + '] /Count ' + refsPaginas.length + ' >>';
+  objetos[nCatalogo - 1] = '<< /Type /Catalog /Pages ' + nPaginas + ' 0 R /Lang (es-MX) /ViewerPreferences << /DisplayDocTitle true >> >>';
+
+  var salida = '%PDF-1.4\n%âãÏÓ\n', offsets = [];
+  objetos.forEach(function (o, i) { offsets.push(salida.length); salida += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
+  var xref = salida.length;
+  salida += 'xref\n0 ' + (objetos.length + 1) + '\n0000000000 65535 f \n';
+  offsets.forEach(function (o) { salida += ('0000000000' + o).slice(-10) + ' 00000 n \n'; });
+  salida += 'trailer\n<< /Size ' + (objetos.length + 1) + ' /Root ' + nCatalogo + ' 0 R /Info ' + nInfo + ' 0 R >>\nstartxref\n' + xref + '\n%%EOF\n';
+  var bytes = new Uint8Array(salida.length);
+  for (var i = 0; i < salida.length; i++) bytes[i] = salida.charCodeAt(i) & 0xFF;
+  return { bytes: bytes, paginas: paginas.length };
+}
+
+function nombreArchivo(empresa, fecha) {
+  var limpio = (empresa || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  var prefijo = 'Test-PPOF_', sufijo = '_' + fechaCorta(fecha) + '.pdf';
+  limpio = limpio.slice(0, 60 - prefijo.length - sufijo.length).replace(/-+$/, '') || 'Empresa';
+  return prefijo + limpio + sufijo;
+}
+
+function datosPDF() {
+  var res = resultadoActual();
+  return {
+    nombre: estado.registro.nombre, empresa: estado.registro.empresa,
+    fecha: res.fecha, puntaje: res.puntaje, r: res.r, senales: res.senales,
+    whatsapp: enlaceWhatsApp(res)
+  };
+}
+
+var esIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function entregarArchivo(bytes, nombre) {
+  return capacidades.downloads.then(function (dl) {
+    if (dl) return dl.save({ filename: nombre, data: new Blob([bytes], { type: 'application/pdf' }) });
+    var blob = new Blob([bytes], { type: 'application/pdf' });
+    var url = URL.createObjectURL(blob);
+    if (esIOS || !('download' in document.createElement('a'))) {
+      var w = window.open(url, '_blank');
+      if (!w) location.href = url;
+    } else {
+      var a = document.createElement('a');
+      a.href = url; a.download = nombre; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  });
+}
+
+var generando = false;
+$('boton-pdf').addEventListener('click', function () {
+  if (generando) return;
+  generando = true;
+  var boton = $('boton-pdf'), msg = $('mensaje-pdf');
+  boton.disabled = true; boton.setAttribute('aria-busy', 'true');
+  $('boton-pdf-texto').textContent = 'Generando…';
+  msg.hidden = true;
+  function terminar() {
+    generando = false; boton.disabled = false; boton.removeAttribute('aria-busy');
+    $('boton-pdf-texto').textContent = 'Descargar resultado en PDF';
+  }
+  setTimeout(function () {
+    var archivo, datos;
+    try {
+      if (window.__ppofForzarFalloPdf) throw new Error('Fallo forzado para pruebas');
+      datos = datosPDF();
+      archivo = generarPDF(datos);
+    } catch (e) {
+      console.error('[Test PPOF] No se pudo generar el PDF.', e);
+      terminar();
+      respaldoImpresion();
+      return;
+    }
+    entregarArchivo(archivo.bytes, nombreArchivo(datos.empresa, datos.fecha)).then(function (r) {
+      terminar();
+      enviar('descarga_pdf', construirEvento('descarga_pdf'));
+    }, function (e) {
+      terminar();
+      if (e && e.code === 'declined') return;
+      console.warn('[Test PPOF] La descarga no se completó.', e && (e.code || e.message));
+      respaldoImpresion();
+    });
+  }, 30);
+});
+function respaldoImpresion() {
+  var msg = $('mensaje-pdf');
+  try { window.print(); } catch (e) { /* sin impresión */ }
+  msg.textContent = 'No se pudo crear el archivo PDF. Usa la opción Imprimir de tu navegador y elige «Guardar como PDF».';
+  msg.hidden = false;
+}
+
+/* =========================================================================
+   ARRANQUE
+   ========================================================================= */
+function iniciar() {
+  document.documentElement.lang = 'es-MX';
+  configurarPrivacidad();
+  if (!destinoValido()) {
+    avisoSinDestino = true;
+    console.warn('[Test PPOF] CONFIG.endpointLead está vacío o no es una URL https: los leads no se envían a ningún webhook.');
+  }
+  var guardado = almacen.leer('sessionStorage', CLAVE_SESION);
+  if (guardado && guardado.registro && Array.isArray(guardado.respuestas) && guardado.respuestas.length === 10) {
+    estado = guardado;
+    $('nombre').value = estado.registro.nombre; $('empresa').value = estado.registro.empresa;
+    $('correo').value = estado.registro.correo; $('privacidad').checked = true;
+    if (estado.pantalla === 'resultado' && estado.respuestas.every(function (r) { return r !== null; })) {
+      renderResultado(); mostrarPantalla('resultado', false);
+    } else {
+      estado.indice = Math.min(Math.max(0, estado.indice | 0), 9);
+      renderPregunta(); mostrarPantalla('test', false);
+    }
+  }
+  procesarCola();
+}
+
+// Exposición mínima para pruebas automatizadas.
+window.PPOF = { calcularPuntaje: calcularPuntaje, clasificar: clasificar, generarPDF: generarPDF, nombreArchivo: nombreArchivo, aWinAnsi: aWinAnsi, CONFIG: CONFIG, estado: function () { return estado; } };
+
+iniciar();
+})();
+</script>
+</body>
+</html>
