@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test PPOF · PEAK LATAM</title>
+<meta name="description" content="Descubre en menos de 5 minutos qué tan enfocada está la operación de tu organización.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0E2A47;
+    --navy-2: #163B63;
+    --accent: #1F7AE0;
+    --ink: #1B2430;
+    --muted: #5B6675;
+    --line: #E3E8EF;
+    --bg: #F4F6F9;
+    --card: #FFFFFF;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 16px;
+  }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { font-weight: 800; letter-spacing: .08em; font-size: 15px; }
+  .brand span { color: #8EC1FF; }
+  .tag { font-size: 12px; opacity: .75; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  main { padding: 24px 16px 48px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: 0 1px 2px rgba(14,42,71,.04), 0 8px 24px rgba(14,42,71,.06);
+  }
+  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 700; color: var(--accent); margin: 0 0 8px; }
+  h1 { font-size: clamp(26px, 6vw, 34px); line-height: 1.15; margin: 0 0 12px; color: var(--navy); }
+  h2 { font-size: 20px; margin: 28px 0 10px; color: var(--navy); }
+  h3 { font-size: 16px; margin: 0 0 6px; color: var(--navy); }
+  p { margin: 0 0 14px; }
+  .lead { font-size: 18px; color: var(--navy-2); font-weight: 500; }
+  .muted { color: var(--muted); }
+  ul.checks { list-style: none; padding: 0; margin: 0 0 8px; }
+  ul.checks li { position: relative; padding-left: 28px; margin-bottom: 8px; }
+  ul.checks li::before {
+    content: ""; position: absolute; left: 0; top: 4px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/12px no-repeat;
+  }
+  .divider { height: 1px; background: var(--line); margin: 24px 0; border: 0; }
+  form .field { margin-bottom: 16px; }
+  label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  input[type=text], input[type=email] {
+    width: 100%; font: inherit; font-size: 16px; padding: 12px 14px;
+    border: 1px solid #CBD3DE; border-radius: 10px; background: #fff; color: var(--ink);
+  }
+  input:focus { outline: 3px solid rgba(31,122,224,.25); border-color: var(--accent); }
+  .field.invalid input { border-color: #C62828; }
+  .err { color: #C62828; font-size: 13px; margin-top: 4px; display: none; }
+  .field.invalid .err { display: block; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: inherit; font-weight: 700; font-size: 16px; text-decoration: none;
+    padding: 14px 22px; border-radius: 10px; border: 0; cursor: pointer;
+    background: var(--accent); color: #fff; min-height: 48px;
+  }
+  .btn:hover { filter: brightness(1.06); }
+  .btn.block { width: 100%; }
+  .btn.ghost { background: transparent; color: var(--navy-2); border: 1px solid #CBD3DE; }
+  .btn.wa { background: #1FA855; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .privacy { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
+
+  /* Preguntas */
+  .progress { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .bar { flex: 1; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s ease; }
+  .count { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .q-topic { font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .q-text { font-size: clamp(19px, 4.6vw, 23px); font-weight: 600; color: var(--navy); line-height: 1.35; min-height: 4.2em; margin-bottom: 24px; }
+  .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .answers button {
+    font: inherit; font-size: 18px; font-weight: 700; padding: 18px; border-radius: 12px; cursor: pointer;
+    border: 2px solid #CBD3DE; background: #fff; color: var(--navy);
+    transition: border-color .15s, background .15s;
+  }
+  .answers button:hover { border-color: var(--accent); }
+  .answers button[aria-pressed=true] { border-color: var(--accent); background: #EAF3FF; color: var(--accent); }
+  .q-nav { display: flex; justify-content: space-between; margin-top: 20px; }
+  .linkbtn { font: inherit; background: none; border: 0; color: var(--muted); cursor: pointer; padding: 8px 0; font-size: 14px; }
+  .linkbtn:disabled { visibility: hidden; }
+
+  /* Resultado */
+  .result-head { border-radius: var(--radius); padding: 24px; margin-bottom: 20px; border: 1px solid transparent; }
+  .score { display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px; }
+  .score b { font-size: 44px; line-height: 1; font-weight: 800; }
+  .score span { font-weight: 600; opacity: .8; }
+  .level { font-size: clamp(22px, 5.4vw, 28px); font-weight: 800; margin: 4px 0 2px; line-height: 1.2; }
+  .alert-pill { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; color: #fff; margin-bottom: 12px; }
+  .motto { font-weight: 600; font-size: 17px; margin: 0; }
+  .scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 24px; }
+  .scale div { font-size: 12px; text-align: center; padding: 8px 4px; border-radius: 8px; background: #EEF1F5; color: var(--muted); font-weight: 600; }
+  .scale div.on { color: #fff; }
+  .box { border-left: 4px solid var(--accent); background: #F6F9FD; padding: 16px 18px; border-radius: 0 10px 10px 0; margin: 20px 0; }
+  .box p:last-child { margin-bottom: 0; }
+  .answers-summary { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 8px; }
+  .answers-summary td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .answers-summary td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
+  .yes { color: #C62828; } .no { color: #2E7D32; }
+  .cta { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px 24px; margin-top: 24px; }
+  .cta h2 { color: #fff; margin-top: 0; }
+  .cta p { color: #D7E3F1; }
+  .mail-status { font-size: 14px; padding: 12px 14px; border-radius: 10px; margin-bottom: 20px; background: #EEF1F5; color: var(--muted); }
+  .mail-status.ok { background: #E8F5E9; color: #1B5E20; }
+  .mail-status.fail { background: #FDECEA; color: #8E1C1C; }
+  footer { padding: 24px 16px 40px; font-size: 13px; color: var(--muted); text-align: center; }
+  footer a { color: var(--navy-2); }
+  [hidden] { display: none !important; }
+  @media (max-width: 480px) {
+    .card { padding: 22px 18px; }
+    .result-head { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">PEAK <span>LATAM</span></div>
+    <div class="tag">Test PPOF</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <!-- 1. Registro -->
+    <section id="s-registro" class="card">
+      <p class="eyebrow">Operational Focus Score</p>
+      <h1>¿Qué tan enfocada está la operación de tu empresa?</h1>
+      <p class="lead">Descubre en menos de 5 minutos qué tan enfocada está la operación de tu organización.</p>
+      <p>Bienvenido al Test PPOF (<em>Perfect Present Operational Focus</em>), desarrollado por PEAK LATAM, filial de Peak Performance Consulting Group.</p>
+      <p>A través de 10 preguntas rápidas podrás identificar el nivel de enfoque operativo de tu organización y detectar posibles señales de dispersión, pérdida de productividad, retrabajo e ineficiencias en la ejecución. El test requiere menos de 5 minutos para completarse.</p>
+      <h3>Al finalizar recibirás:</h3>
+      <ul class="checks">
+        <li>Tu clasificación de enfoque operativo.</li>
+        <li>Una interpretación de los principales riesgos identificados.</li>
+        <li>Recomendaciones iniciales para fortalecer la ejecución y el enfoque de tu organización.</li>
+      </ul>
+      <hr class="divider">
+      <h3>Para comenzar, completa tus datos:</h3>
+      <form id="f-registro" novalidate>
+        <div class="field">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" name="nombre" type="text" autocomplete="name" required>
+          <div class="err">Escribe tu nombre.</div>
+        </div>
+        <div class="field">
+          <label for="empresa">Empresa</label>
+          <input id="empresa" name="empresa" type="text" autocomplete="organization" required>
+          <div class="err">Escribe el nombre de tu empresa.</div>
+        </div>
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
+          <div class="err">Escribe un correo válido.</div>
+        </div>
+        <button class="btn block" type="submit">Comenzar el test →</button>
+        <p class="privacy">Usaremos tus datos únicamente para enviarte tu resultado y dar seguimiento a tu diagnóstico.</p>
+      </form>
+    </section>
+
+    <!-- 2. Preguntas -->
+    <section id="s-test" class="card" hidden>
+      <p class="eyebrow">Test PPOF</p>
+      <h1 style="font-size:22px">Evalúa el nivel de enfoque operativo de tu organización</h1>
+      <p class="muted">Responde “Sí / No” a cada pregunta, considerando la situación actual de tu organización.</p>
+      <div class="progress">
+        <div class="bar"><i id="bar"></i></div>
+        <div class="count" id="count">1 de 10</div>
+      </div>
+      <div class="q-topic" id="q-topic"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="answers">
+        <button type="button" data-v="1" aria-pressed="false">Sí</button>
+        <button type="button" data-v="0" aria-pressed="false">No</button>
+      </div>
+      <div class="q-nav">
+        <button type="button" class="linkbtn" id="prev">← Anterior</button>
+      </div>
+    </section>
+
+    <!-- 3. Resultado -->
+    <section id="s-resultado" hidden>
+      <div class="mail-status" id="mail-status">Enviando tu resultado por correo…</div>
+      <div class="card">
+        <p class="eyebrow">Tu resultado PPOF</p>
+        <p class="muted" id="r-who" style="margin-bottom:16px"></p>
+        <div class="result-head" id="r-head">
+          <div class="score"><b id="r-score"></b><span>/ 10 puntos</span></div>
+          <div class="level" id="r-level"></div>
+          <div class="alert-pill" id="r-alert"></div>
+          <p class="motto" id="r-motto"></p>
+        </div>
+        <div class="scale" id="r-scale"></div>
+        <div id="r-body"></div>
+        <div class="box">
+          <h3>Principal desafío</h3>
+          <p id="r-desafio"></p>
+        </div>
+        <h2>Recomendación PEAK</h2>
+        <div id="r-reco"></div>
+        <h2>Tus respuestas</h2>
+        <table class="answers-summary"><tbody id="r-answers"></tbody></table>
+        <div class="cta">
+          <h2 id="c-titulo"></h2>
+          <p id="c-texto"></p>
+          <p id="c-cta"></p>
+          <a class="btn wa block" id="c-wa" target="_blank" rel="noopener"></a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN
+   Pega aquí la URL de tu Google Apps Script (ver README.md).
+   Mientras esté vacía, el test funciona pero no envía correos.
+   ============================================================ */
+const APPS_SCRIPT_URL = "";
+
+const $ = (id) => document.getElementById(id);
+const el = (tag, text, cls) => { const n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; };
+
+let C = null;              // contenido.json
+const datos = {};          // nombre, empresa, email
+let respuestas = [];       // 1 = Sí, 0 = No
+let actual = 0;
+
+function show(id) {
+  ["s-registro", "s-test", "s-resultado"].forEach((s) => ($(s).hidden = s !== id));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderFooter() {
+  const f = $("footer");
+  C.contacto.lineas.forEach((l) => { f.append(l); f.append(el("br")); });
+  const tel = el("a", "Tel. " + C.contacto.telefono); tel.href = C.contacto.telefonoLink;
+  const mail = el("a", C.contacto.email); mail.href = "mailto:" + C.contacto.email;
+  f.append(tel, " · ", mail);
+}
+
+/* ---------- Registro ---------- */
+$("f-registro").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!C) return;
+  let ok = true;
+  ["nombre", "empresa", "email"].forEach((k) => {
+    const input = $(k);
+    const v = input.value.trim();
+    const valido = k === "email" ? /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) : v.length > 1;
+    input.parentElement.classList.toggle("invalid", !valido);
+    if (!valido && ok) { input.focus(); ok = false; }
+    datos[k] = v;
+  });
+  if (!ok) return;
+  respuestas = new Array(C.preguntas.length).fill(null);
+  actual = 0;
+  renderPregunta();
+  show("s-test");
+});
+
+/* ---------- Preguntas ---------- */
+function renderPregunta() {
+  const p = C.preguntas[actual];
+  const n = C.preguntas.length;
+  $("q-topic").textContent = (actual + 1) + ". " + p.tema;
+  $("q-text").textContent = p.texto;
+  $("count").textContent = (actual + 1) + " de " + n;
+  $("bar").style.width = (actual / n) * 100 + "%";
+  document.querySelectorAll(".answers button").forEach((b) => {
+    b.setAttribute("aria-pressed", String(respuestas[actual] === Number(b.dataset.v)));
+  });
+  $("prev").disabled = actual === 0;
+}
+
+let avanzando = false;
+document.querySelectorAll(".answers button").forEach((b) => {
+  b.addEventListener("click", () => {
+    if (avanzando) return;
+    respuestas[actual] = Number(b.dataset.v);
+    renderPregunta();
+    avanzando = true;
+    setTimeout(() => {
+      avanzando = false;
+      if (actual < C.preguntas.length - 1) { actual++; renderPregunta(); }
+      else { $("bar").style.width = "100%"; mostrarResultado(); }
+    }, 220);
+  });
+});
+$("prev").addEventListener("click", () => { if (actual > 0) { actual--; renderPregunta(); } });
+
+/* ---------- Resultado ---------- */
+function nivelPara(puntos) {
+  return C.resultados.find((r) => puntos >= r.min && puntos <= r.max);
+}
+
+function mostrarResultado() {
+  const puntos = respuestas.reduce((a, b) => a + b, 0);
+  const r = nivelPara(puntos);
+
+  $("r-who").textContent = datos.nombre + " · " + datos.empresa;
+  $("r-head").style.background = r.fondo;
+  $("r-head").style.borderColor = r.color + "33";
+  $("r-head").style.color = r.color;
+  $("r-score").textContent = puntos;
+  $("r-level").textContent = r.emoji + " " + r.titulo;
+  $("r-alert").textContent = r.alerta;
+  $("r-alert").style.background = r.color;
+  $("r-motto").textContent = r.lema;
+  $("r-motto").style.color = "var(--ink)";
+
+  const scale = $("r-scale"); scale.textContent = "";
+  [...C.resultados].sort((a, b) => a.min - b.min).forEach((x) => {
+    const d = el("div", x.min + "–" + x.max + " · " + x.alerta);
+    if (x === r) { d.classList.add("on"); d.style.background = x.color; }
+    scale.append(d);
+  });
+
+  const body = $("r-body"); body.textContent = "";
+  r.parrafos.forEach((t) => body.append(el("p", t)));
+  $("r-desafio").textContent = r.desafio;
+  const reco = $("r-reco"); reco.textContent = "";
+  r.recomendacion.forEach((t) => reco.append(el("p", t)));
+
+  const tb = $("r-answers"); tb.textContent = "";
+  C.preguntas.forEach((p, i) => {
+    const tr = el("tr");
+    tr.append(el("td", (i + 1) + ". " + p.tema));
+    tr.append(el("td", respuestas[i] ? "Sí" : "No", respuestas[i] ? "yes" : "no"));
+    tb.append(tr);
+  });
+
+  $("c-titulo").textContent = C.cierre.titulo;
+  $("c-texto").textContent = C.cierre.texto;
+  $("c-cta").textContent = C.cierre.cta;
+  $("c-wa").textContent = C.cierre.boton + " →";
+  $("c-wa").href = C.whatsapp;
+
+  show("s-resultado");
+  enviarCorreo(puntos);
+}
+
+/* ---------- Envío por correo (Google Apps Script) ---------- */
+async function enviarCorreo(puntos) {
+  const status = $("mail-status");
+  if (!APPS_SCRIPT_URL) {
+    status.textContent = "Vista de prueba: el envío por correo aún no está configurado.";
+    return;
+  }
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      // text/plain evita la verificación CORS previa que Apps Script no soporta
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ ...datos, respuestas, puntos }),
+    });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || "error");
+    status.className = "mail-status ok";
+    status.textContent = "✓ Te enviamos una copia de tu resultado a " + datos.email + ".";
+  } catch (err) {
+    status.className = "mail-status fail";
+    status.textContent = "No pudimos enviar el correo en este momento. Tu resultado se muestra abajo; si lo necesitas, escríbenos a " + C.contacto.email + ".";
+  }
+}
+
+/* ---------- Inicio ---------- */
+fetch("contenido.json", { cache: "no-cache" })
+  .then((r) => r.json())
+  .then((json) => { C = json; renderFooter(); })
+  .catch(() => {
+    $("s-registro").innerHTML = "<p>No se pudo cargar el test. Recarga la página.</p>";
+  });
+</script>
+</body>
+</html>
