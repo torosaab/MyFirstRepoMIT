@@ -61,7 +61,7 @@
     background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/12px no-repeat;
   }
   .divider { height: 1px; background: var(--line); margin: 24px 0; border: 0; }
-  form .field { margin-bottom: 16px; }
+  #f-registro .field { margin-bottom: 16px; }
   label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
   input[type=text], input[type=email] {
     width: 100%; font: inherit; font-size: 16px; padding: 12px 14px;
@@ -123,6 +123,7 @@
   .cta { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px 24px; margin-top: 24px; }
   .cta h2 { color: #fff; margin-top: 0; }
   .cta p { color: #D7E3F1; }
+  .cta .wa-num { font-size: 14px; text-align: center; margin: 12px 0 0; }
   .mail-status { font-size: 14px; padding: 12px 14px; border-radius: 10px; margin-bottom: 20px; background: #EEF1F5; color: var(--muted); }
   .mail-status.ok { background: #E8F5E9; color: #1B5E20; }
   .mail-status.fail { background: #FDECEA; color: #8E1C1C; }
@@ -161,7 +162,7 @@
       </ul>
       <hr class="divider">
       <h3>Para comenzar, completa tus datos:</h3>
-      <form id="f-registro" novalidate>
+      <div id="f-registro">
         <div class="field">
           <label for="nombre">Nombre</label>
           <input id="nombre" name="nombre" type="text" autocomplete="name" required>
@@ -177,9 +178,9 @@
           <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
           <div class="err">Escribe un correo válido.</div>
         </div>
-        <button class="btn block" type="submit">Comenzar el test →</button>
+        <button class="btn block" type="button" id="comenzar">Comenzar el test →</button>
         <p class="privacy">Usaremos tus datos únicamente para enviarte tu resultado y dar seguimiento a tu diagnóstico.</p>
-      </form>
+      </div>
     </section>
 
     <!-- 2. Preguntas -->
@@ -229,6 +230,7 @@
           <p id="c-texto"></p>
           <p id="c-cta"></p>
           <a class="btn wa block" id="c-wa" target="_blank" rel="noopener"></a>
+          <p class="wa-num" id="c-wa-num"></p>
         </div>
       </div>
     </section>
@@ -267,9 +269,11 @@ function renderFooter() {
   f.append(tel, " · ", mail);
 }
 
-/* ---------- Registro ---------- */
-$("f-registro").addEventListener("submit", (e) => {
-  e.preventDefault();
+/* ---------- Registro ----------
+   Sin <form>: Notion muestra la página en un iframe sin "allow-forms" y bloquearía el envío. */
+$("f-registro").addEventListener("keydown", (e) => { if (e.key === "Enter") comenzar(); });
+$("comenzar").addEventListener("click", comenzar);
+function comenzar() {
   if (!C) return;
   let ok = true;
   ["nombre", "empresa", "email"].forEach((k) => {
@@ -285,7 +289,7 @@ $("f-registro").addEventListener("submit", (e) => {
   actual = 0;
   renderPregunta();
   show("s-test");
-});
+}
 
 /* ---------- Preguntas ---------- */
 function renderPregunta() {
@@ -363,6 +367,8 @@ function mostrarResultado() {
   $("c-cta").textContent = C.cierre.cta;
   $("c-wa").textContent = C.cierre.boton + " →";
   $("c-wa").href = C.whatsapp;
+  const num = (C.whatsapp.match(/wa\.me\/52(\d{2})(\d{4})(\d{4})/) || []).slice(1);
+  if (num.length) $("c-wa-num").textContent = "o escríbenos por WhatsApp al +52 " + num.join(" ");
 
   show("s-resultado");
   enviarCorreo(puntos);
