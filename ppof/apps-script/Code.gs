@@ -19,57 +19,84 @@ const RESPONDER_A = 'torosaab@gmail.com';
 const HOJA = 'Respuestas';
 
 function doPost(e) {
+  return json(procesarSeguro(e.postData.contents));
+}
+
+// El test también puede llamar por GET (?d=...&callback=...) porque el iframe de Notion
+// puede bloquear las peticiones fetch. Con callback responde como JSONP.
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (!p.d) return json({ ok: true, servicio: 'Test PPOF' });
+  const res = procesarSeguro(p.d);
+  if (/^[A-Za-z_$][\w$]*$/.test(p.callback || '')) {
+    return ContentService.createTextOutput(p.callback + '(' + JSON.stringify(res) + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return json(res);
+}
+
+function procesarSeguro(texto) {
+  const lock = LockService.getScriptLock();
   try {
-    const d = JSON.parse(e.postData.contents);
-    const nombre = limpiar(d.nombre, 120);
-    const empresa = limpiar(d.empresa, 160);
-    const email = limpiar(d.email, 200);
-    const respuestas = Array.isArray(d.respuestas) ? d.respuestas.map((v) => (v ? 1 : 0)) : [];
-
-    const C = contenido();
-    if (!nombre || !empresa) throw new Error('Faltan datos');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new Error('Correo inválido');
-    if (respuestas.length !== C.preguntas.length) throw new Error('Respuestas incompletas');
-
-    // El puntaje se recalcula aquí; no se confía en el que manda el navegador.
-    const puntos = respuestas.reduce((a, b) => a + b, 0);
-    const r = C.resultados.find((x) => puntos >= x.min && puntos <= x.max);
-
-    registrar(nombre, empresa, email, puntos, r, respuestas);
-
-    const html = correoHtml(C, r, puntos, nombre, empresa, respuestas);
-
-    // 1) Correo para la persona que hizo el test.
-    MailApp.sendEmail(email, 'Tu resultado del Test PPOF: ' + r.titulo, textoPlano(C, r, puntos, nombre), {
-      name: REMITENTE,
-      replyTo: RESPONDER_A,
-      htmlBody: html,
-    });
-
-    // 2) Copia interna con los datos de contacto y el mismo resultado.
-    if (COPIA_A) {
-      const datos = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;background:#EAF3FF;border:1px solid #BBD6F7;border-radius:8px;padding:14px 16px;margin:12px;">' +
-        '<b>Nuevo Test PPOF completado</b><br>' +
-        'Nombre: ' + esc(nombre) + '<br>Empresa: ' + esc(empresa) + '<br>Correo: <a href="mailto:' + esc(email) + '">' + esc(email) + '</a><br>' +
-        'Resultado: ' + puntos + '/10 · ' + esc(r.titulo) + '</div>';
-      MailApp.sendEmail(COPIA_A, 'Test PPOF: ' + nombre + ' (' + empresa + ') · ' + puntos + '/10 ' + r.titulo,
-        'Nuevo Test PPOF completado\nNombre: ' + nombre + '\nEmpresa: ' + empresa + '\nCorreo: ' + email +
-        '\nResultado: ' + puntos + '/10 · ' + r.titulo + '\n\n' + textoPlano(C, r, puntos, nombre), {
-        name: 'Test PPOF',
-        replyTo: email,
-        htmlBody: datos + html,
-      });
-    }
-
-    return json({ ok: true, puntos: puntos, nivel: r.id });
+    const d = JSON.parse(texto);
+    // Evita correos duplicados si el navegador reintenta por otra vía.
+    const id = limpiar(d.id, 64);
+    lock.waitLock(20000);
+    const cache = CacheService.getScriptCache();
+    if (id && cache.get('envio:' + id)) return JSON.parse(cache.get('envio:' + id));
+    const res = procesar(d);
+    if (id) cache.put('envio:' + id, JSON.stringify(res), 3600);
+    return res;
   } catch (err) {
     console.error(err);
-    return json({ ok: false, error: String(err.message || err) });
+    return { ok: false, error: String(err.message || err) };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
   }
 }
 
-function doGet() {
-  return json({ ok: true, servicio: 'Test PPOF' });
+function procesar(d) {
+  const nombre = limpiar(d.nombre, 120);
+  const empresa = limpiar(d.empresa, 160);
+  const email = limpiar(d.email, 200);
+  const respuestas = Array.isArray(d.respuestas) ? d.respuestas.map((v) => (v ? 1 : 0)) : [];
+
+  const C = contenido();
+  if (!nombre || !empresa) throw new Error('Faltan datos');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new Error('Correo inválido');
+  if (respuestas.length !== C.preguntas.length) throw new Error('Respuestas incompletas');
+
+  // El puntaje se recalcula aquí; no se confía en el que manda el navegador.
+  const puntos = respuestas.reduce((a, b) => a + b, 0);
+  const r = C.resultados.find((x) => puntos >= x.min && puntos <= x.max);
+
+  registrar(nombre, empresa, email, puntos, r, respuestas);
+
+  const html = correoHtml(C, r, puntos, nombre, empresa, respuestas);
+
+  // 1) Correo para la persona que hizo el test.
+  MailApp.sendEmail(email, 'Tu resultado del Test PPOF: ' + r.titulo, textoPlano(C, r, puntos, nombre), {
+    name: REMITENTE,
+    replyTo: RESPONDER_A,
+    htmlBody: html,
+  });
+
+  // 2) Copia interna con los datos de contacto y el mismo resultado.
+  if (COPIA_A) {
+    const datos = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;background:#EAF3FF;border:1px solid #BBD6F7;border-radius:8px;padding:14px 16px;margin:12px;">' +
+      '<b>Nuevo Test PPOF completado</b><br>' +
+      'Nombre: ' + esc(nombre) + '<br>Empresa: ' + esc(empresa) + '<br>Correo: <a href="mailto:' + esc(email) + '">' + esc(email) + '</a><br>' +
+      'Resultado: ' + puntos + '/10 · ' + esc(r.titulo) + '</div>';
+    MailApp.sendEmail(COPIA_A, 'Test PPOF: ' + nombre + ' (' + empresa + ') · ' + puntos + '/10 ' + r.titulo,
+      'Nuevo Test PPOF completado\nNombre: ' + nombre + '\nEmpresa: ' + empresa + '\nCorreo: ' + email +
+      '\nResultado: ' + puntos + '/10 · ' + r.titulo + '\n\n' + textoPlano(C, r, puntos, nombre), {
+      name: 'Test PPOF',
+      replyTo: email,
+      htmlBody: datos + html,
+    });
+  }
+
+  return { ok: true, puntos: puntos, nivel: r.id };
 }
 
 function contenido() {

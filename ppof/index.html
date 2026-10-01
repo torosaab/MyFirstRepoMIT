@@ -374,28 +374,86 @@ function mostrarResultado() {
   enviarCorreo(puntos);
 }
 
-/* ---------- Envío por correo (Google Apps Script) ---------- */
+/* ---------- Envío por correo (Google Apps Script) ----------
+   Notion muestra la página en un iframe aislado que puede bloquear fetch,
+   así que se intenta en este orden: fetch → JSONP (<script>) → imagen (sin confirmación). */
 async function enviarCorreo(puntos) {
   const status = $("mail-status");
   if (!APPS_SCRIPT_URL) {
     status.textContent = "Vista de prueba: el envío por correo aún no está configurado.";
     return;
   }
+  const payload = JSON.stringify({ ...datos, respuestas, puntos, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8) });
+  const errores = [];
+  const ok = () => {
+    status.className = "mail-status ok";
+    status.textContent = "✓ Te enviamos una copia de tu resultado a " + datos.email + ".";
+  };
+
   try {
     const res = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
       // text/plain evita la verificación CORS previa que Apps Script no soporta
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ ...datos, respuestas, puntos }),
+      body: payload,
     });
     const json = await res.json();
-    if (!json.ok) throw new Error(json.error || "error");
-    status.className = "mail-status ok";
-    status.textContent = "✓ Te enviamos una copia de tu resultado a " + datos.email + ".";
+    if (!json.ok) throw new Error("servidor: " + (json.error || "error"));
+    return ok();
   } catch (err) {
-    status.className = "mail-status fail";
-    status.textContent = "No pudimos enviar el correo en este momento. Tu resultado se muestra abajo; si lo necesitas, escríbenos a " + C.contacto.email + ".";
+    errores.push("A: " + err.message);
+    if (String(err.message).startsWith("servidor:")) return falla(errores);
   }
+
+  try {
+    const json = await jsonp(APPS_SCRIPT_URL + "?d=" + encodeURIComponent(payload));
+    if (!json.ok) throw new Error("servidor: " + (json.error || "error"));
+    return ok();
+  } catch (err) {
+    errores.push("B: " + err.message);
+    if (String(err.message).startsWith("servidor:")) return falla(errores);
+  }
+
+  try {
+    await new Promise((resolve) => {
+      const img = new Image();
+      img.onload = img.onerror = resolve;   // Apps Script no devuelve imagen: solo importa que salga la petición
+      setTimeout(resolve, 8000);
+      img.src = APPS_SCRIPT_URL + "?d=" + encodeURIComponent(payload) + "&t=" + Date.now();
+    });
+    status.className = "mail-status ok";
+    status.textContent = "✓ Estamos enviando tu resultado a " + datos.email + ". Si no lo ves en unos minutos, revisa tu carpeta de spam.";
+    detalle(errores);
+  } catch (err) {
+    errores.push("C: " + err.message);
+    falla(errores);
+  }
+}
+
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = "ppof_cb_" + Date.now();
+    const s = document.createElement("script");
+    const fin = () => { delete window[cb]; s.remove(); };
+    const timer = setTimeout(() => { fin(); reject(new Error("tiempo agotado")); }, 20000);
+    window[cb] = (data) => { clearTimeout(timer); fin(); resolve(data); };
+    s.onerror = () => { clearTimeout(timer); fin(); reject(new Error("script bloqueado")); };
+    s.src = url + "&callback=" + cb;
+    document.head.append(s);
+  });
+}
+
+function falla(errores) {
+  const status = $("mail-status");
+  status.className = "mail-status fail";
+  status.textContent = "No pudimos enviar el correo en este momento. Tu resultado se muestra abajo; si lo necesitas, escríbenos a " + C.contacto.email + ".";
+  detalle(errores);
+}
+
+function detalle(errores) {
+  const det = el("div", "Detalle técnico: " + errores.join(" · "));
+  det.style.cssText = "font-size:11px;opacity:.7;margin-top:6px";
+  $("mail-status").append(det);
 }
 
 /* ---------- Inicio ---------- */
