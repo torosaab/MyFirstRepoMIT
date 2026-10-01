@@ -6,15 +6,15 @@
  * respuesta quede registrada en ella.
  */
 
-// URL pública de contenido.json (la misma que usa la página del test).
-const CONTENIDO_URL = 'https://torosaab.github.io/MyFirstRepoMIT/ppof/contenido.json';
+// Los textos (preguntas, resultados, contacto) están en Contenido.gs, generado por ppof/build.py.
 
-// Correo que recibe una copia oculta de cada resultado. Déjalo vacío ('') para no recibir copias.
-const COPIA_A = 'contacto@engagepeak.com';
+// Correo que recibe un aviso con los datos y el resultado de cada persona. Déjalo vacío ('') para no recibirlo.
+// PRUEBAS: torosaab@gmail.com. En producción: contacto@engagepeak.com.
+const COPIA_A = 'torosaab@gmail.com';
 
 // Nombre del remitente y dirección a la que llegan las respuestas del destinatario.
 const REMITENTE = 'PEAK LATAM';
-const RESPONDER_A = 'contacto@engagepeak.com';
+const RESPONDER_A = 'torosaab@gmail.com';
 
 const HOJA = 'Respuestas';
 
@@ -37,13 +37,29 @@ function doPost(e) {
 
     registrar(nombre, empresa, email, puntos, r, respuestas);
 
-    const opciones = {
+    const html = correoHtml(C, r, puntos, nombre, empresa, respuestas);
+
+    // 1) Correo para la persona que hizo el test.
+    MailApp.sendEmail(email, 'Tu resultado del Test PPOF: ' + r.titulo, textoPlano(C, r, puntos, nombre), {
       name: REMITENTE,
       replyTo: RESPONDER_A,
-      htmlBody: correoHtml(C, r, puntos, nombre, empresa, respuestas),
-    };
-    if (COPIA_A) opciones.bcc = COPIA_A;
-    MailApp.sendEmail(email, 'Tu resultado del Test PPOF: ' + r.titulo, textoPlano(C, r, puntos, nombre), opciones);
+      htmlBody: html,
+    });
+
+    // 2) Copia interna con los datos de contacto y el mismo resultado.
+    if (COPIA_A) {
+      const datos = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;background:#EAF3FF;border:1px solid #BBD6F7;border-radius:8px;padding:14px 16px;margin:12px;">' +
+        '<b>Nuevo Test PPOF completado</b><br>' +
+        'Nombre: ' + esc(nombre) + '<br>Empresa: ' + esc(empresa) + '<br>Correo: <a href="mailto:' + esc(email) + '">' + esc(email) + '</a><br>' +
+        'Resultado: ' + puntos + '/10 · ' + esc(r.titulo) + '</div>';
+      MailApp.sendEmail(COPIA_A, 'Test PPOF: ' + nombre + ' (' + empresa + ') · ' + puntos + '/10 ' + r.titulo,
+        'Nuevo Test PPOF completado\nNombre: ' + nombre + '\nEmpresa: ' + empresa + '\nCorreo: ' + email +
+        '\nResultado: ' + puntos + '/10 · ' + r.titulo + '\n\n' + textoPlano(C, r, puntos, nombre), {
+        name: 'Test PPOF',
+        replyTo: email,
+        htmlBody: datos + html,
+      });
+    }
 
     return json({ ok: true, puntos: puntos, nivel: r.id });
   } catch (err) {
@@ -57,12 +73,7 @@ function doGet() {
 }
 
 function contenido() {
-  const cache = CacheService.getScriptCache();
-  const guardado = cache.get('contenido');
-  if (guardado) return JSON.parse(guardado);
-  const texto = UrlFetchApp.fetch(CONTENIDO_URL).getContentText('UTF-8');
-  cache.put('contenido', texto, 600);
-  return JSON.parse(texto);
+  return CONTENIDO;
 }
 
 function registrar(nombre, empresa, email, puntos, r, respuestas) {

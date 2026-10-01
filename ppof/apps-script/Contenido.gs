@@ -1,4 +1,5 @@
-{
+// Generado por ppof/build.py a partir de contenido.json. No editar a mano.
+const CONTENIDO = {
   "whatsapp": "https://wa.me/525539276154?text=Hola%2C%20hice%20el%20Test%20PPOF%20y%20me%20gustar%C3%ADa%20agendar%20un%20diagn%C3%B3stico%20sin%20costo.",
   "preguntas": [
     {
@@ -125,4 +126,4 @@
     "telefonoLink": "tel:+525568202176",
     "email": "contacto@engagepeak.com"
   }
-}
+};
