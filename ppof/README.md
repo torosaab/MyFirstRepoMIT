@@ -20,11 +20,13 @@ Para producción, cambia `COPIA_A` y `RESPONDER_A` en `Code.gs` a `contacto@enga
 
 ## 1. La página en Notion
 
-El test vive en una página de Notion como bloque HTML, creado a partir de `notion/test-ppof.html`.
-Para que cualquiera pueda abrirlo desde el QR, en Notion ve a **Compartir → Publicar** y activa la publicación en la web.
-Copia la URL pública (`….notion.site/…`): con ella se genera el QR.
+El test se publica con GitHub Pages en `https://torosaab.github.io/MyFirstRepoMIT/ppof/` y se muestra en Notion con un bloque **Embed** que apunta a esa URL.
+No uses el bloque HTML de Notion (archivo subido): Notion bloquea ahí las conexiones a internet y los correos no se envían.
+`notion/test-ppof.html` queda solo como versión de un solo archivo para revisar el test sin conexión.
 
-Cada vez que cambies textos o la URL del script, ejecuta `python3 build.py` y vuelve a subir `notion/test-ppof.html` al bloque HTML.
+Para que cualquiera pueda abrirlo desde el QR, en Notion ve a **Compartir → Publicar** y activa la publicación en la web.
+
+Si cambias textos, edita `contenido.json` y sube el cambio a `main`; la página se actualiza sola en 1–2 minutos.
 
 ## 2. Activar el envío por correo (Google Apps Script, gratis)
 
@@ -38,7 +40,7 @@ Cada vez que cambies textos o la URL del script, ejecuta `python3 build.py` y vu
    - *Ejecutar como:* **Yo**
    - *Quién tiene acceso:* **Cualquier usuario**
 7. Copia la **URL de la aplicación web** (termina en `/exec`).
-8. En `index.html`, pega esa URL en la línea `const APPS_SCRIPT_URL = "";`, ejecuta `python3 build.py` y vuelve a subir el HTML a Notion. Si quieres, pásale la URL a Claude y lo hace por ti.
+8. En `index.html`, pega esa URL en la línea `const APPS_SCRIPT_URL = "";`, ejecuta `python3 build.py` y sube el cambio a `main`.
 
 > Si después cambias `Code.gs`, entra a **Implementar → Gestionar implementaciones**, edita la implementación y elige **Nueva versión**. Así la URL no cambia.
 
