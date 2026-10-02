@@ -1,0 +1,130 @@
+Hola. No sé programar, así que explícame todo en español y con palabras sencillas.
+
+Quiero que construyas en este repositorio un test en línea con resultado y envío por correo. Requisitos:
+
+PÁGINA DEL TEST
+- Una página web (index.html en la raíz del repositorio) que se publique gratis con GitHub Pages.
+- Tres pantallas: 1) bienvenida y registro (nombre, empresa, correo), 2) preguntas de Sí/No una por una con barra de avance y botón para regresar, 3) resultado con puntaje, nivel, interpretación, principal desafío, recomendación, resumen de respuestas y el texto final con botón de WhatsApp.
+- Pensada primero para celular (la abrirán desde un código QR), con diseño profesional y limpio.
+- Para el registro no uses <form>: usa un botón con evento de clic.
+- Todos los textos en un solo archivo contenido.json, para que yo pueda cambiarlos sin tocar el código.
+
+CORREOS Y REGISTRO (Google Apps Script, gratis)
+- Prepara el código de Google Apps Script en una carpeta apps-script/ para que yo lo pegue en una hoja de Google Sheets (Extensiones > Apps Script). Pon los textos en un archivo aparte (Contenido.gs) generado a partir de contenido.json, para que el script no dependa de internet.
+- Al terminar el test se envían 2 correos: uno a la persona con su resultado completo en HTML con buen diseño, y otro a mi correo de copia con sus datos de contacto y el mismo resultado.
+- Cada respuesta se guarda como una fila en la hoja (fecha, datos, puntaje, nivel y cada respuesta).
+- El script recalcula el puntaje; no confía en el que manda la página.
+- Para enviar los datos, la página usa fetch POST con Content-Type text/plain (evita el bloqueo CORS de Apps Script). Si falla, reintenta por GET con JSONP (doGet con parámetros d y callback). Cada envío lleva un id único y el script ignora los repetidos para no duplicar correos.
+- Incluye en el script una función llamada prueba que yo pueda ejecutar para dar permisos y mandarme un correo de prueba.
+- Deja en index.html una constante APPS_SCRIPT_URL vacía; yo te daré la URL después.
+- La página muestra si el correo se envió o no, con el detalle técnico del error en letra pequeña si falla.
+
+EXTRAS
+- Genera un código QR (PNG y SVG) que apunte a la dirección de GitHub Pages de este repositorio.
+- Escribe un README.md en español con los pasos para configurar Apps Script y GitHub Pages.
+- Prueba que el test funciona antes de terminar (los tres niveles de resultado y el envío simulado).
+- Guarda y sube los cambios. Al final dime en lista corta qué hiciste y qué tengo que hacer yo.
+
+INFORMACIÓN DEL TEST (reprodúcela exactamente, sin cambiar ni resumir los textos)
+
+NOMBRE DEL TEST: Test PPOF – Operational Focus Score (PEAK LATAM)
+
+PANTALLA DE BIENVENIDA
+Etiqueta pequeña arriba del título: Operational Focus Score
+Título: ¿Qué tan enfocada está la operación de tu empresa?
+Subtítulo: Descubre en menos de 5 minutos qué tan enfocada está la operación de tu organización.
+Texto de bienvenida:
+Bienvenido al Test PPOF (Perfect Present Operational Focus), desarrollado por PEAK LATAM, filial de Peak Performance Consulting Group.
+A través de 10 preguntas rápidas podrás identificar el nivel de enfoque operativo de tu organización y detectar posibles señales de dispersión, pérdida de productividad, retrabajo e ineficiencias en la ejecución. El test requiere menos de 5 minutos para completarse.
+Al finalizar recibirás:
+- Tu clasificación de enfoque operativo.
+- Una interpretación de los principales riesgos identificados.
+- Recomendaciones iniciales para fortalecer la ejecución y el enfoque de tu organización.
+Para comenzar, completa tus datos: Nombre, Empresa, Correo electrónico
+Botón: Comenzar el test →
+Texto pequeño bajo el botón: Usaremos tus datos únicamente para enviarte tu resultado y dar seguimiento a tu diagnóstico.
+
+PREGUNTAS (responden Sí / No)
+Título de la pantalla: TEST PPOF – Evalúa el nivel de enfoque operativo de tu organización
+Instrucción: Responde "Sí / No" a cada una de las siguientes preguntas, considerando la situación actual de tu organización.
+1. Tema: Efectividad de las reuniones  Pregunta: ¿Más del 30% de las reuniones terminan sin acuerdos claros, responsables definidos o fechas de seguimiento?
+2. Tema: Priorización  Pregunta: ¿Los líderes gestionan simultáneamente más de tres iniciativas consideradas de "alta prioridad"?
+3. Tema: Gestión mediante indicadores  Pregunta: ¿Los tableros operativos contienen más de 10 KPIs?
+4. Tema: Retrabajo  Pregunta: ¿Existen retrabajos frecuentes en reportes, análisis o entregables críticos para la operación?
+5. Tema: Toma de decisiones  Pregunta: ¿Se toman decisiones relevantes basándose principalmente en intuición o percepciones, en lugar de información objetiva y datos del proceso?
+6. Tema: Estabilidad de las prioridades  Pregunta: ¿Las prioridades cambian constantemente sin criterios claros que permitan justificar dichos cambios?
+7. Tema: Resolución de problemas  Pregunta: Problemas "ya resueltos", ¿vuelven a aparecer semanas o meses después en la operación?
+8. Tema: Interrupciones operativas  Pregunta: ¿Las interrupciones del día a día son frecuentes y afectan de manera recurrente la agenda y las actividades previamente planificadas?
+9. Tema: Enfoque en la ejecución  Pregunta: ¿Tu equipo dedica una parte importante de su tiempo a "apagar incendios" en lugar de ejecutar prioridades estratégicas?
+10. Tema: Capacidad organizacional  Pregunta: ¿Tu equipo manifiesta señales frecuentes de agotamiento, saturación o resistencia ante nuevas iniciativas y cambios?
+
+CÓMO SE CALIFICA
+Cada "Sí" vale 1 punto (máximo 10).
+🟢 0 a 3 puntos: "Enfoque de Alto Rendimiento" | Operación Saludable
+🟡 4 a 6 puntos: "Distracción Moderada" | Alerta Amarilla
+🔴 7 a 10 puntos: "Ceguera Operativa Severa" | Alerta Roja
+
+RESULTADO 7 A 10 PUNTOS
+Nombre del nivel: 🔴 Ceguera Operativa Severa | Alerta Roja (color principal #C62828, fondo #FDECEA)
+Frase corta: Recupera el foco de tu organización antes de que la dispersión se convierta en un costo estructural de mayor impacto.
+Interpretación:
+El resultado del test identifica una ceguera operativa severa ya que existen señales significativas de dispersión operativa y pérdida de foco en la ejecución, que pueden estar generando costos ocultos y afectaciones relevantes en la productividad y rentabilidad de la organización. La combinación de prioridades excesivas, interrupciones constantes, retrabajos, problemas recurrentes y falta de disciplina en la gestión puede provocar una utilización ineficiente de los recursos, pérdida de capacidad de ejecución y una presión creciente sobre los equipos de liderazgo.
+En términos financieros, estas dinámicas pueden traducirse en fugas de EBITDA asociadas a pérdida de atención, tiempos improductivos, duplicidad de esfuerzos e ineficiencias en la operación.
+Desde la perspectiva de Recursos Humanos, esta situación debe considerarse también como un riesgo organizacional. Cuando las personas operan permanentemente bajo esquemas de urgencia, prioridades cambiantes y presión por atender múltiples frentes simultáneamente, aumenta la posibilidad de agotamiento, desgaste del liderazgo, desalineación de equipos y resistencia ante nuevas iniciativas.
+Lo anterior representa también una oportunidad estratégica para Recursos Humanos. La pérdida de foco operativo no solo tiene consecuencias sobre la productividad y el desempeño de los equipos; también puede traducirse directamente en costos, pérdida de capacidad de ejecución y afectaciones al EBITDA. En este contexto, Recursos Humanos puede desempeñar un papel clave al identificar el impacto de estas dinámicas en las personas y en el liderazgo, fortalecer las capacidades de gestión y contribuir al diseño de mecanismos que promuevan una cultura de priorización, disciplina y ejecución sostenible.
+Esta perspectiva permite a Recursos Humanos trascender su rol tradicional y demostrar de manera tangible su contribución a los resultados del negocio. Recursos Humanos puede convertirse en un habilitador directo de productividad, eficiencia y rentabilidad, fortaleciendo su posición como socio estratégico de la dirección y como una función con impacto medible en los resultados financieros de la organización.
+Principal desafío: Recuperar el foco organizacional, establecer prioridades claras y generar una mayor disciplina de ejecución, reduciendo las dinámicas que consumen capacidad sin generar valor proporcional.
+Recomendación PEAK:
+Es de suma importancia realizar un análisis estructurado que permita identificar las principales fuentes de pérdida de foco, determinar su impacto sobre la operación y establecer un modelo de gestión que concentre los recursos —personas, tiempo y capacidad de liderazgo— en las prioridades de mayor impacto.
+Para Recursos Humanos, esto representa una oportunidad para pasar de una función enfocada principalmente en gestionar las consecuencias de la saturación organizacional a participar activamente en la construcción de las condiciones organizacionales necesarias para una ejecución de alto desempeño.
+El siguiente paso consiste en identificar dónde se está perdiendo el foco, qué impacto tiene sobre la operación y cómo estas dinámicas están afectando a las personas y al liderazgo. La metodología PPOF proporciona un marco estructurado para identificar estas fuentes de dispersión y establecer oportunidades concretas de mejora, permitiendo a la organización recuperar capacidad de ejecución y reducir los costos asociados a la falta de enfoque, colocando a Recursos Humanos en una posición estratégica para el negocio.
+
+RESULTADO 4 A 6 PUNTOS
+Nombre del nivel: 🟡 Distracción Moderada | Alerta Amarilla (color principal #B26A00, fondo #FFF6E0)
+Frase corta: Optimiza tus procesos para escalar de forma rentable.
+Interpretación:
+El resultado del test indica que tu organización presenta una distracción moderada: está generando resultados, pero existen fricciones operativas que pueden estar consumiendo recursos, tiempo y capacidad de ejecución. Estas ineficiencias suelen permanecer ocultas porque la operación continúa funcionando y los objetivos se siguen alcanzando; sin embargo, pueden representar un costo creciente para la organización, limitar la velocidad de crecimiento y requerir cada vez más esfuerzo y capacidad de los equipos para sostener los resultados.
+Desde la perspectiva de Recursos Humanos, este escenario representa una oportunidad estratégica. Las fricciones operativas, los retrabajos, las interrupciones y la falta de claridad en las prioridades no solo impactan la productividad, sino también la forma en que las personas utilizan su tiempo, gestionan sus cargas de trabajo y ejercen el liderazgo. Recursos Humanos puede contribuir a identificar estos patrones, fortalecer las capacidades de los líderes y promover mecanismos de gestión que permitan a los equipos concentrar su capacidad en las actividades que realmente generan valor.
+Principal desafío: Identificar y eliminar las fricciones que impiden que la organización opere con mayor foco, productividad y eficiencia, antes de que se conviertan en una barrera para el crecimiento.
+Recomendación PEAK:
+Es un momento ideal para optimizar antes de que las fricciones se conviertan en una barrera para escalar. Para Recursos Humanos, esta intervención representa una oportunidad para demostrar su impacto directo en la eficiencia y en los resultados del negocio. Al contribuir a reducir actividades que no agregan valor, mejorar la capacidad de ejecución de los equipos y fortalecer la disciplina de gestión, RH puede evolucionar de una función que administra las consecuencias de la ineficiencia a un socio estratégico que habilita productividad, crecimiento rentable y sostenibilidad organizacional.
+El siguiente paso consiste en identificar las principales fuentes de distracción, retrabajo e ineficiencia, priorizando aquellas que tienen mayor impacto sobre la productividad, los costos y la capacidad de ejecución. La metodología PPOF hace visibles estas fuentes de pérdida de foco y establece oportunidades concretas para optimizar la operación, colocando a Recursos Humanos en una posición estratégica para el negocio.
+
+RESULTADO 0 A 3 PUNTOS
+Nombre del nivel: 🟢 Enfoque de Alto Rendimiento | Operación Saludable (color principal #2E7D32, fondo #E8F5E9)
+Frase corta: Convierte tu enfoque operativo en una ventaja competitiva sostenible.
+Interpretación:
+¡Felicidades! Los resultados del test indican que tu organización presenta un buen nivel de foco operativo y disciplina en la ejecución. Esto representa una fortaleza relevante, ya que significa que la organización cuenta con prácticas y dinámicas que permiten concentrar esfuerzos, mantener prioridades y ejecutar de manera efectiva.
+Sin embargo, mantener un alto desempeño de manera sostenida representa un reto diferente. El crecimiento, la incorporación de nuevos proyectos, los cambios de liderazgo o las condiciones cambiantes del mercado pueden generar, gradualmente, nuevas prioridades, mayores niveles de complejidad y pérdida de las prácticas que actualmente permiten mantener el foco. Por ello, el objetivo no debe limitarse a conservar el desempeño actual, sino a convertir las buenas prácticas existentes en capacidades organizacionales que puedan mantenerse, replicarse y evolucionar en el tiempo.
+Desde la perspectiva de Recursos Humanos, este escenario representa una oportunidad particularmente relevante. Recursos Humanos puede desempeñar un papel estratégico en la identificación y documentación de las prácticas que están contribuyendo al alto desempeño, así como en su incorporación a los modelos de liderazgo, desarrollo de talento, gestión del desempeño y cultura organizacional. De esta manera, las prácticas que hoy dependen de determinadas personas o equipos pueden convertirse en capacidades institucionales, capaces de mantenerse incluso ante el crecimiento, la transformación o los cambios de liderazgo.
+Principal desafío: El objetivo no es únicamente mantener una operación saludable, sino transformar el enfoque operativo en una capacidad organizacional diferenciadora y en una ventaja competitiva sostenible.
+Recomendación PEAK:
+Para Recursos Humanos, esta etapa representa una oportunidad para consolidar y hacer tangible su contribución estratégica al negocio. Más allá de gestionar talento, RH puede convertirse en el área que ayuda a asegurar que las capacidades que generan alto desempeño se incorporen a la organización y no dependan exclusivamente de individuos, estilos de liderazgo o circunstancias particulares. Esto permite fortalecer la cultura de ejecución, acelerar la integración de nuevos líderes y equipos y proteger la productividad ante el crecimiento y el cambio.
+El siguiente paso consiste en identificar, documentar y asimilar corporativamente las prácticas que están generando los mejores resultados, priorizando aquellas con mayor impacto sobre la productividad, los costos y la capacidad de ejecución. La metodología PPOF identifica estas prácticas y establece mecanismos para fortalecerlas e institucionalizarlas, permitiendo a Recursos Humanos tomar una posición estratégica dentro de la organización.
+
+TEXTO FINAL (aparece al final de todos los resultados)
+Título: Agenda una sesión de diagnóstico sin costo
+Texto: Descubre cómo la metodología PPOF puede ayudarte a identificar las principales fuentes de dispersión operativa y sus oportunidades de mejora.
+Invitación: Habla con un consultor de PEAK LATAM, descubre cómo podemos apoyarte y agenda un diagnóstico sin costo. ¡Hablemos!
+Botón: Hablemos por WhatsApp → (abre WhatsApp)
+Número de WhatsApp: +52 55 3927 6154
+Mensaje que ya va escrito al abrir WhatsApp: Hola, hice el Test PPOF y me gustaría agendar un diagnóstico sin costo.
+Debajo del botón, muestra también el número como texto: o escríbenos por WhatsApp al +52 55 3927 6154
+Datos de contacto (al pie de la página y del correo):
+Campus Corporativo Coyoacán
+Av. Coyoacán 1622, Edificio 4, Piso 2, Col. Del Valle
+Alc. Benito Juárez, C.P. 03100, Ciudad de México
+Tel. +52 (55) 6820 2176
+contacto@engagepeak.com
+
+DISEÑO
+- Barra superior azul marino con el texto "PEAK LATAM" (LATAM en azul claro) y "Test PPOF" a la derecha.
+- Colores: azul marino #0E2A47, azul de acento #1F7AE0, fondo gris claro #F4F6F9, tarjetas blancas con esquinas redondeadas.
+- Tipografía Inter (Google Fonts).
+- En el resultado: puntaje grande "X / 10 puntos", nombre del nivel con su emoji, etiqueta de color con la alerta, la frase corta, una escala con los tres rangos (resaltando el obtenido), los párrafos, un recuadro con el Principal desafío, la Recomendación PEAK, una tabla con las respuestas (Sí en rojo, No en verde) y al final un bloque azul marino con el texto final y el botón verde de WhatsApp.
+- El correo al participante tiene el mismo contenido y diseño. Asunto: "Tu resultado del Test PPOF: [nombre del nivel]". Remitente: PEAK LATAM.
+- El correo de copia tiene como asunto "Test PPOF: [nombre] ([empresa]) · [puntos]/10 [nivel]" y arriba un recuadro con nombre, empresa, correo y resultado de la persona. Al responderlo, la respuesta va a la persona que hizo el test.
+
+CORREOS
+Correo que recibe una copia de cada resultado: ESCRIBE AQUÍ TU CORREO DE GMAIL
+Nombre que aparece como remitente: PEAK LATAM
